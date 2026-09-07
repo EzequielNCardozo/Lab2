@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Kiosco",
+    "slug": "kiosco-movil",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "kioscomovil",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FAF7F2"
+      }
+    },
+    "web": {
+      "output": "static"
+    },
+    "plugins": ["expo-router"]
+  }
+}

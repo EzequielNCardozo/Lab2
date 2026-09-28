@@ -27,5 +27,12 @@ App móvil para gestionar el catálogo y el stock de un kiosco
     - Zustand para guardar la sesión del usuario
 
 
+## Base de datos
+    - DB_ParLab_completo.sql: crea la base desde cero, con los datos iniciales.
+    - DB_ParLab_con_datos.sql: la base con los datos del proyecto (productos, stock, movimientos y usuarios).
+    Están en ProyABP_MiKiosco_V1/api-y-base. Para importar la que tiene datos, parados en esa carpeta:
+        mysql -u root -p < DB_ParLab_con_datos.sql
+    Ojo: reemplaza la base DB_ParLab que ya tengan.
+
 ####
  Recordar: Cambiar contraseña en API.js y poner la IP de su PC en config.ts

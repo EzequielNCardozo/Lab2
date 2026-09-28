@@ -1,13 +1,12 @@
-import { traer } from './api'
-import type { Usuario } from '../tipos/usuario'
+import { traer, enviar } from './api'
+import type { Usuario, UsuarioLogueado } from '../tipos/usuario'
 
-/** Todos los usuarios. */
+/** Todos los usuarios. El historial los necesita, incluso los inhabilitados. */
 export function obtenerUsuarios(): Promise<Usuario[]> {
   return traer<Usuario[]>('/usuarios', 'los usuarios')
 }
 
-/** responsables de un movimiento nuevo. */
-export async function obtenerUsuariosHabilitados(): Promise<Usuario[]> {
-  const usuarios = await obtenerUsuarios()
-  return usuarios.filter((usuario) => usuario.habilitado === 1)
+/** Valida usuario y contraseña, y devuelve los datos de quien entra. */
+export function iniciarSesion(usuario: string, contrasena: string): Promise<UsuarioLogueado> {
+  return enviar<UsuarioLogueado>('/login', { usuario, contrasena }, 'iniciar sesión')
 }

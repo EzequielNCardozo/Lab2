@@ -1,44 +1,25 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
+import { useQuery } from '@tanstack/react-query'
 import Boton from '../components/Boton'
 import EncabezadoCatalogo from '../components/EncabezadoCatalogo'
 import FilaProducto from '../components/FilaProducto'
 import { obtenerProductosConStock } from '../services/productos'
+import { useSesion } from '../store/sesion'
 import { API_URL } from '../config'
 import { tema } from '../styles/theme'
-import type { ProductoConStock } from '../tipos/producto'
 
 /** Pantalla principal: el listado de productos con su stock, y el buscador. */
 export default function Inicio() {
   const router = useRouter()
-  const [productos, setProductos] = useState<ProductoConStock[]>([])
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { usuario, salir } = useSesion()
   const [busqueda, setBusqueda] = useState('')
 
-  const cargar = useCallback(async () => {
-    setCargando(true)
-    setError(null)
-    try {
-      setProductos(await obtenerProductosConStock())
-    } catch (problema) {
-      // Se agrega la URL, que es lo que hace falta para ubicar el problema.
-      const detalle = problema instanceof Error ? problema.message : String(problema)
-      setError(
-        `${detalle}.\n\nRevisá que la API de Laboratorio I esté corriendo y que ${API_URL} sea la dirección correcta.`
-      )
-    } finally {
-      setCargando(false)
-    }
-  }, [])
-
-  // Recarga la primera vez y cada vez que se vuelve a esta pantalla.
-  useFocusEffect(
-    useCallback(() => {
-      cargar()
-    }, [cargar])
-  )
+  const { data: productos = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['productos'],
+    queryFn: obtenerProductosConStock,
+  })
 
   // El buscador filtra sobre lo que ya se trajo, sin volver a pedirle a la API.
   const termino = busqueda.trim().toLowerCase()
@@ -48,7 +29,7 @@ export default function Inicio() {
       : productos.filter((producto) => producto.nombre.toLowerCase().includes(termino))
 
   function contenido() {
-    if (cargando) {
+    if (isLoading) {
       return (
         <View style={styles.centrado}>
           <ActivityIndicator size="large" color={tema.colores.secundario} />
@@ -60,8 +41,10 @@ export default function Inicio() {
     if (error) {
       return (
         <View style={styles.centrado}>
-          <Text style={styles.error}>{error}</Text>
-          <Boton texto="Reintentar" onPress={cargar} />
+          <Text style={styles.error}>
+            {`${error.message}.\n\nRevisá que la API de Laboratorio I esté corriendo y que ${API_URL} sea la dirección correcta.`}
+          </Text>
+          <Boton texto="Reintentar" onPress={() => refetch()} />
         </View>
       )
     }
@@ -96,6 +79,8 @@ export default function Inicio() {
   return (
     <View style={styles.pantalla}>
       <EncabezadoCatalogo
+        atiende={usuario ? `${usuario.nombre} ${usuario.apellido}` : ''}
+        onCerrarSesion={salir}
         busqueda={busqueda}
         onBuscar={setBusqueda}
         onAgregar={() => router.push('/nuevo')}

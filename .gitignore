@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+dist/
+web-build/
+*.log
+
+# Builds nativos: se regeneran con `npx expo prebuild`
+android/
+ios/
+
+.env
+.DS_Store
+Thumbs.db

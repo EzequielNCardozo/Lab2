@@ -24,7 +24,7 @@ export async function traer<T>(ruta: string, queSePedia: string): Promise<T> {
 }
 
 /** Manda datos a la API. */
-export async function enviar(ruta: string, cuerpo: object, queSeQueriaHacer: string): Promise<void> {
+export async function enviar<T = void>(ruta: string, cuerpo: object, queSeQueriaHacer: string): Promise<T> {
   const respuesta = await fetch(`${API_URL}${ruta}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -34,4 +34,6 @@ export async function enviar(ruta: string, cuerpo: object, queSeQueriaHacer: str
   if (!respuesta.ok) {
     throw new Error(await mensajeDeError(respuesta, `No se pudo ${queSeQueriaHacer}`))
   }
+
+  return respuesta.json()
 }

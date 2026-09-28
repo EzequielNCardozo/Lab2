@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
+import { useQueryClient } from '@tanstack/react-query'
 import Boton from '../components/Boton'
 import CampoTexto from '../components/CampoTexto'
 import { agregarProducto } from '../services/productos'
@@ -13,6 +14,7 @@ import { tema } from '../styles/theme'
  */
 export default function Nuevo() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [nombre, setNombre] = useState('')
   const [descripcion, setDescripcion] = useState('')
   const [guardando, setGuardando] = useState(false)
@@ -32,7 +34,8 @@ export default function Nuevo() {
 
     try {
       await agregarProducto(nombreLimpio, descripcion.trim())
-      // Se vuelve al listado, que se recarga solo y ya muestra el producto nuevo.
+      // Marca el listado como viejo para que se vuelva a pedir
+      queryClient.invalidateQueries({ queryKey: ['productos'] })
       router.back()
     } catch (problema) {
       setError(problema instanceof Error ? problema.message : String(problema))

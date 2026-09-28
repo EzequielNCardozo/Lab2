@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import Boton from '../../components/Boton'
 import CampoTexto from '../../components/CampoTexto'
 import Dato from '../../components/Dato'
 import SelectorChips from '../../components/SelectorChips'
 import { crearStockInicial, obtenerProductoConStock } from '../../services/productos'
-import { obtenerUsuariosHabilitados } from '../../services/usuarios'
 import { registrarMovimiento } from '../../services/movimientos'
+import { useSesion } from '../../store/sesion'
 import { tema } from '../../styles/theme'
-import type { ProductoConStock } from '../../tipos/producto'
-import type { Usuario } from '../../tipos/usuario'
 
 /** Los valores son los que espera la API: 'I' suma, 'E' resta. */
 const TIPOS = [
@@ -18,50 +17,25 @@ const TIPOS = [
   { valor: 'E', texto: 'Egreso' },
 ]
 
-/**
- * Formulario para registrar un ingreso o un egreso de stock.
- *
- * El selector de "quién registra" es lo que deja el movimiento asentado a
- * nombre de alguien, ya que la app no tiene login.
- */
+/** Formulario para registrar un ingreso o un egreso de stock a nombre de quien inició sesión. */
 export default function RegistrarMovimiento() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const usuario = useSesion((estado) => estado.usuario)
   const idProducto = Number(id)
 
-  const [producto, setProducto] = useState<ProductoConStock | null>(null)
-  const [usuarios, setUsuarios] = useState<Usuario[]>([])
-  const [cargando, setCargando] = useState(true)
-  const [errorDeCarga, setErrorDeCarga] = useState<string | null>(null)
+  // Misma clave que el detalle, así usa el producto que ya está en caché
+  const { data: producto, isLoading, error: errorDeCarga, refetch } = useQuery({
+    queryKey: ['producto', idProducto],
+    queryFn: () => obtenerProductoConStock(idProducto),
+  })
 
   const [tipo, setTipo] = useState('I')
   const [cantidad, setCantidad] = useState('')
   const [observacion, setObservacion] = useState('')
-  const [responsable, setResponsable] = useState<string | null>(null)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const cargar = useCallback(async () => {
-    setCargando(true)
-    setErrorDeCarga(null)
-    try {
-      const [productoTraido, usuariosTraidos] = await Promise.all([
-        obtenerProductoConStock(idProducto),
-        obtenerUsuariosHabilitados(),
-      ])
-      setProducto(productoTraido)
-      setUsuarios(usuariosTraidos)
-    } catch (problema) {
-      setErrorDeCarga(problema instanceof Error ? problema.message : String(problema))
-    } finally {
-      setCargando(false)
-    }
-  }, [idProducto])
-
-  // useEffect y no useFocusEffect: recargar un formulario borraría lo escrito.
-  useEffect(() => {
-    cargar()
-  }, [cargar])
 
   /** Devuelve qué está mal en el formulario, o null si se puede mandar. */
   function queFalta(): string | null {
@@ -76,8 +50,8 @@ export default function RegistrarMovimiento() {
       return 'La razón es obligatoria: es lo que queda guardado en el historial.'
     }
 
-    if (responsable === null) {
-      return 'Elegí quién registra el movimiento.'
+    if (!usuario) {
+      return 'Iniciá sesión para registrar movimientos.'
     }
 
     if (tipo === 'E') {
@@ -101,7 +75,7 @@ export default function RegistrarMovimiento() {
     }
 
     // Repetido para TypeScript: queFalta() ya se aseguró de que estén.
-    if (!producto || responsable === null) return
+    if (!producto || !usuario) return
 
     setGuardando(true)
     setError(null)
@@ -118,10 +92,11 @@ export default function RegistrarMovimiento() {
         tipo: tipo === 'I' ? 'I' : 'E',
         cantidad: Number(cantidad),
         observacion: observacion.trim(),
-        ID_usuario: Number(responsable),
+        ID_usuario: usuario.ID,
       })
 
-      // Se vuelve al detalle, que se recarga solo y ya muestra el stock nuevo.
+      // Cambió el stock y el historial: se marcan todos los datos como viejos
+      queryClient.invalidateQueries()
       router.back()
     } catch (problema) {
       setError(problema instanceof Error ? problema.message : String(problema))
@@ -129,7 +104,7 @@ export default function RegistrarMovimiento() {
     }
   }
 
-  if (cargando) {
+  if (isLoading) {
     return (
       <View style={styles.centrado}>
         <ActivityIndicator size="large" color={tema.colores.secundario} />
@@ -140,8 +115,10 @@ export default function RegistrarMovimiento() {
   if (errorDeCarga || !producto) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.error}>{errorDeCarga || 'No se encontró el producto.'}</Text>
-        <Boton texto="Reintentar" onPress={cargar} />
+        <Text style={styles.error}>
+          {errorDeCarga ? errorDeCarga.message : 'No se encontró el producto.'}
+        </Text>
+        <Boton texto="Reintentar" onPress={() => refetch()} />
       </View>
     )
   }
@@ -151,17 +128,6 @@ export default function RegistrarMovimiento() {
       <View style={styles.centrado}>
         <Text style={styles.mensaje}>
           {producto.nombre} está inhabilitado, así que no puede recibir movimientos de stock.
-        </Text>
-      </View>
-    )
-  }
-
-  if (usuarios.length === 0) {
-    return (
-      <View style={styles.centrado}>
-        <Text style={styles.mensaje}>
-          No hay usuarios habilitados, y todo movimiento tiene que quedar a nombre de
-          alguien. Habilitá un usuario antes de registrar.
         </Text>
       </View>
     )
@@ -201,15 +167,9 @@ export default function RegistrarMovimiento() {
         maximo={150}
       />
 
-      <SelectorChips
-        etiqueta="Quién registra"
-        opciones={usuarios.map((usuario) => ({
-          valor: String(usuario.ID),
-          texto: `${usuario.nombre} ${usuario.apellido}`,
-        }))}
-        elegido={responsable}
-        onElegir={setResponsable}
-      />
+      {usuario ? (
+        <Dato etiqueta="Registra" valor={`${usuario.nombre} ${usuario.apellido}`} />
+      ) : null}
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 

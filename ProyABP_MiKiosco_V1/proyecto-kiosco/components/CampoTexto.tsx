@@ -12,6 +12,10 @@ type Props = {
   soloNumeros?: boolean
   /** Tope de caracteres, igual al largo de la columna en la base. */
   maximo?: number
+  /** Tapa lo que se escribe, para la contraseña. */
+  oculto?: boolean
+  /** Sin mayúscula automática ni corrector, para usuario y contraseña. */
+  sinCorrector?: boolean
 }
 
 /** Un campo del formulario: la etiqueta arriba y el input abajo. */
@@ -23,6 +27,8 @@ export default function CampoTexto({
   multilinea = false,
   soloNumeros = false,
   maximo,
+  oculto = false,
+  sinCorrector = false,
 }: Props) {
   return (
     <View style={styles.campo}>
@@ -36,6 +42,9 @@ export default function CampoTexto({
         multiline={multilinea}
         keyboardType={soloNumeros ? 'numeric' : 'default'}
         maxLength={maximo}
+        secureTextEntry={oculto}
+        autoCapitalize={sinCorrector ? 'none' : 'sentences'}
+        autoCorrect={!sinCorrector}
       />
     </View>
   )

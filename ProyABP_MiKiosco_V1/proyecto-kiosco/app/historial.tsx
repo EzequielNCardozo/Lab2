@@ -1,37 +1,18 @@
-import { useCallback, useState } from 'react'
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
-import { useFocusEffect } from 'expo-router'
+import { useQuery } from '@tanstack/react-query'
 import Boton from '../components/Boton'
 import FilaMovimiento from '../components/FilaMovimiento'
 import { obtenerHistorial } from '../services/movimientos'
 import { tema } from '../styles/theme'
-import type { MovimientoDetallado } from '../tipos/movimiento'
 
 /** El historial de todos los movimientos de stock, del más nuevo al más viejo. */
 export default function Historial() {
-  const [movimientos, setMovimientos] = useState<MovimientoDetallado[]>([])
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: movimientos = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['historial'],
+    queryFn: obtenerHistorial,
+  })
 
-  const cargar = useCallback(async () => {
-    setCargando(true)
-    setError(null)
-    try {
-      setMovimientos(await obtenerHistorial())
-    } catch (problema) {
-      setError(problema instanceof Error ? problema.message : String(problema))
-    } finally {
-      setCargando(false)
-    }
-  }, [])
-
-  useFocusEffect(
-    useCallback(() => {
-      cargar()
-    }, [cargar])
-  )
-
-  if (cargando) {
+  if (isLoading) {
     return (
       <View style={styles.centrado}>
         <ActivityIndicator size="large" color={tema.colores.secundario} />
@@ -43,8 +24,8 @@ export default function Historial() {
   if (error) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.error}>{error}</Text>
-        <Boton texto="Reintentar" onPress={cargar} />
+        <Text style={styles.error}>{error.message}</Text>
+        <Boton texto="Reintentar" onPress={() => refetch()} />
       </View>
     )
   }

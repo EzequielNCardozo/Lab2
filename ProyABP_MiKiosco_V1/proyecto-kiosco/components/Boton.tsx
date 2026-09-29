@@ -4,8 +4,8 @@ import { tema } from '../styles/theme'
 type Props = {
   texto: string
   onPress: () => void
-  /** 'secundario' es el mismo botón con menos peso visual. */
-  variante?: 'principal' | 'secundario'
+  /** 'secundario' tiene menos peso visual; 'peligro' es para acciones que borran. */
+  variante?: 'principal' | 'secundario' | 'peligro'
   /** Mientras está en true el botón no responde, para evitar el doble envío. */
   ocupado?: boolean
 }
@@ -13,17 +13,28 @@ type Props = {
 /** El botón de toda la app. */
 export default function Boton({ texto, onPress, variante = 'principal', ocupado = false }: Props) {
   const esSecundario = variante === 'secundario'
+  const esPeligro = variante === 'peligro'
+  const conFondoClaro = esSecundario || esPeligro
 
   return (
     <Pressable
-      style={[styles.boton, esSecundario && styles.botonSecundario, ocupado && styles.botonOcupado]}
+      style={[
+        styles.boton,
+        esSecundario && styles.botonSecundario,
+        esPeligro && styles.botonPeligro,
+        ocupado && styles.botonOcupado,
+      ]}
       onPress={onPress}
       disabled={ocupado}
     >
       {ocupado ? (
-        <ActivityIndicator color={esSecundario ? tema.colores.primario : tema.colores.superficie} />
+        <ActivityIndicator color={conFondoClaro ? tema.colores.primario : tema.colores.superficie} />
       ) : (
-        <Text style={[styles.texto, esSecundario && styles.textoSecundario]}>{texto}</Text>
+        <Text
+          style={[styles.texto, esSecundario && styles.textoSecundario, esPeligro && styles.textoPeligro]}
+        >
+          {texto}
+        </Text>
       )}
     </Pressable>
   )
@@ -44,6 +55,10 @@ const styles = StyleSheet.create({
     backgroundColor: tema.colores.superficie,
     borderColor: tema.colores.borde,
   },
+  botonPeligro: {
+    backgroundColor: tema.colores.superficie,
+    borderColor: tema.colores.error,
+  },
   botonOcupado: {
     opacity: 0.6,
   },
@@ -54,5 +69,8 @@ const styles = StyleSheet.create({
   },
   textoSecundario: {
     color: tema.colores.texto,
+  },
+  textoPeligro: {
+    color: tema.colores.error,
   },
 })

@@ -1,45 +1,23 @@
-import { useCallback, useState } from 'react'
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native'
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useQuery } from '@tanstack/react-query'
 import Boton from '../../components/Boton'
+import AccionesProducto from '../../components/AccionesProducto'
 import Dato from '../../components/Dato'
 import { obtenerProductoConStock } from '../../services/productos'
 import { formatearFecha } from '../../utils/fecha'
 import { tema } from '../../styles/theme'
-import type { ProductoConStock } from '../../tipos/producto'
 
-/**
- * El detalle de un producto.
- *
- * El id llega en la ruta (`/producto/4`) y siempre como texto.
- */
+/** El detalle de un producto. El id llega en la ruta (`/producto/4`) como texto. */
 export default function DetalleProducto() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const idProducto = Number(id)
 
-  const [producto, setProducto] = useState<ProductoConStock | null>(null)
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const cargar = useCallback(async () => {
-    setCargando(true)
-    setError(null)
-    try {
-      setProducto(await obtenerProductoConStock(idProducto))
-    } catch (problema) {
-      setError(problema instanceof Error ? problema.message : String(problema))
-    } finally {
-      setCargando(false)
-    }
-  }, [idProducto])
-
-  // Se recarga al volver, para mostrar el stock actualizado.
-  useFocusEffect(
-    useCallback(() => {
-      cargar()
-    }, [cargar])
-  )
+  const { data: producto, isLoading, error, refetch } = useQuery({
+    queryKey: ['producto', idProducto],
+    queryFn: () => obtenerProductoConStock(idProducto),
+  })
 
   if (Number.isNaN(idProducto)) {
     return (
@@ -49,7 +27,7 @@ export default function DetalleProducto() {
     )
   }
 
-  if (cargando) {
+  if (isLoading) {
     return (
       <View style={styles.centrado}>
         <ActivityIndicator size="large" color={tema.colores.secundario} />
@@ -60,8 +38,8 @@ export default function DetalleProducto() {
   if (error || !producto) {
     return (
       <View style={styles.centrado}>
-        <Text style={styles.error}>{error || 'No se encontró el producto.'}</Text>
-        <Boton texto="Reintentar" onPress={cargar} />
+        <Text style={styles.error}>{error ? error.message : 'No se encontró el producto.'}</Text>
+        <Boton texto="Reintentar" onPress={() => refetch()} />
       </View>
     )
   }
@@ -101,6 +79,8 @@ export default function DetalleProducto() {
           Un producto inhabilitado no puede recibir movimientos de stock.
         </Text>
       )}
+
+      <AccionesProducto producto={producto} />
     </ScrollView>
   )
 }

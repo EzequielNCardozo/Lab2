@@ -63,6 +63,31 @@ export function agregarProducto(nombre: string, descripcion: string): Promise<vo
   return enviar('/productos', { nombre, descripcion }, 'agregar el producto')
 }
 
+/** Cambia el nombre y la descripción de un producto. */
+export function modificarProducto(id: number, nombre: string, descripcion: string): Promise<void> {
+  return enviar(`/productos/${id}`, { nombre, descripcion }, 'modificar el producto', 'PUT')
+}
+
+/** Habilita o inhabilita un producto. Al inhabilitar, la base pide motivo y stock en 0. */
+export function cambiarEstadoProducto(
+  id: number,
+  habilitado: boolean,
+  motivo: string | null,
+  ID_usuario: number
+): Promise<void> {
+  return enviar(
+    `/productos/${id}/estado`,
+    { habilitado, motivo, ID_usuario },
+    habilitado ? 'habilitar el producto' : 'inhabilitar el producto',
+    'PUT'
+  )
+}
+
+/** Borra un producto. La base solo lo permite si nunca tuvo movimientos y no tiene stock. */
+export function eliminarProducto(id: number): Promise<void> {
+  return enviar(`/productos/${id}`, {}, 'eliminar el producto', 'DELETE')
+}
+
 /**
  * Crea la fila de stock de un producto que todavía no la tenía.
  *

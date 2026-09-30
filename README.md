@@ -15,11 +15,12 @@ App móvil para gestionar el catálogo y el stock de un kiosco
     5- Registrar un movimiento de stock (ingreso o egreso)   - Completado
     6- Consultar el historial de movimientos                 - Completado
     7- Iniciar y cerrar sesión                               - Completado
+    8- Modificar un producto                                 - Completado
+    9- Habilitar o inhabilitar un producto                   - Completado
+    10- Eliminar un producto                                 - Completado
 
 ## Features pendientes
-    8- Modificar un producto
-    9- Habilitar o inhabilitar un producto
-    10- Eliminar un producto
+
     11- Filtrar el historial por fecha y por usuario
 
 ## Mejoras (clase 4)

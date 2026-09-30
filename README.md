@@ -22,6 +22,12 @@ App móvil para gestionar el catálogo y el stock de un kiosco
     10- Eliminar un producto
     11- Filtrar el historial por fecha y por usuario
 
+## Mejoras pendientes
+    - Detalle del producto: mostrar solo la acción que se puede hacer.
+        Con stock: no mostrar Inhabilitar ni Eliminar, y avisar que primero hay que dejar el stock en 0.
+        Stock en 0 con movimientos: mostrar solo Inhabilitar.
+        Stock en 0 sin movimientos: mostrar solo Eliminar.
+
 ## Mejoras (clase 4)
     - TanStack Query para traer los datos de la API
     - Zustand para guardar la sesión del usuario

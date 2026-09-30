@@ -34,5 +34,6 @@ App móvil para gestionar el catálogo y el stock de un kiosco
         mysql -u root -p < DB_ParLab_con_datos.sql
     Ojo: reemplaza la base DB_ParLab que ya tengan.
 
-####
- Recordar: Cambiar contraseña en API.js y poner la IP de su PC en config.ts
+## Cómo levantar el proyecto
+    Los pasos completos (base, API y app) están en INSTALACION.md, en la raíz del repo.
+    La contraseña de MySQL va en API_Express/.env (copiar .env.example). La IP no hace falta configurarla.

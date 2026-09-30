@@ -1,8 +1,18 @@
+import Constants from 'expo-constants'
+
 /**
- * Dirección donde escucha la API, que es la de Laboratorio I.
+ * Dirección donde escucha la API (la de `api-y-base/API_Express`).
  *
- * Es lo único que hay que cambiar de una máquina a otra. Va la IP de la PC y no
- * `localhost`, así funciona también desde el celular; si el router la cambia,
- * se saca con `ipconfig` y se actualiza acá. El `/api` del final va incluido.
+ * No hace falta tocarla: se arma sola con la IP de la PC que corre
+ * `npx expo start`, que es la misma donde corre la API. Así funciona en
+ * cualquier máquina y también desde el celular, sin poner la IP a mano.
+ *
+ * Si la API corre en otra PC o en otro puerto, se puede forzar la dirección
+ * con la variable EXPO_PUBLIC_API_URL (ver INSTALACION.md). El `/api` del final va incluido.
  */
-export const API_URL = 'http://192.168.X.X:3001/api'
+const PUERTO_API = 3001
+
+// hostUri viene como "192.168.100.14:8081": nos quedamos con la IP
+const ipDeLaPc = Constants.expoConfig?.hostUri?.split(':')[0] ?? 'localhost'
+
+export const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${ipDeLaPc}:${PUERTO_API}/api`

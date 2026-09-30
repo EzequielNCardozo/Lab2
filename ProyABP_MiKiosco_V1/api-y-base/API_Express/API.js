@@ -10,11 +10,13 @@ app.use(cors());
 app.use(express.json());
 
 //CONEXION MYSQL
+// Los datos salen del archivo .env (copiar .env.example y poner la contraseña propia).
+// Así nadie tiene que tocar este archivo ni subir su contraseña al repo.
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'CAMBIAR LA CONTRASEÑA', //ACUERDENSE DE CAMBIAR ESTA CONTRASEÑA
-    database: 'DB_ParLab'
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'DB_ParLab'
 });
 
 

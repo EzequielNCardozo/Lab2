@@ -59,6 +59,7 @@ export default function AccionesProducto({ producto }: Props) {
     <View style={styles.acciones}>
       <Boton
         texto="Modificar producto"
+        icono="create-outline"
         variante="secundario"
         onPress={() => router.push({ pathname: '/editar/[id]', params: { id: producto.ID } })}
       />
@@ -66,11 +67,12 @@ export default function AccionesProducto({ producto }: Props) {
       {habilitado ? (
         <Boton
           texto="Inhabilitar producto"
+          icono="ban-outline"
           variante="secundario"
           onPress={() => router.push({ pathname: '/inhabilitar/[id]', params: { id: producto.ID } })}
         />
       ) : (
-        <Boton texto="Habilitar producto" variante="secundario" onPress={habilitar} ocupado={ocupado} />
+        <Boton texto="Habilitar producto" icono="checkmark-circle-outline" variante="secundario" onPress={habilitar} ocupado={ocupado} />
       )}
 
       {confirmandoBorrado ? (
@@ -78,15 +80,15 @@ export default function AccionesProducto({ producto }: Props) {
           <Text style={styles.pregunta}>¿Eliminar {producto.nombre}? No se puede deshacer.</Text>
           <View style={styles.fila}>
             <View style={styles.opcion}>
-              <Boton texto="Cancelar" variante="secundario" onPress={() => setConfirmandoBorrado(false)} />
+              <Boton texto="Cancelar" icono="close" variante="secundario" onPress={() => setConfirmandoBorrado(false)} />
             </View>
             <View style={styles.opcion}>
-              <Boton texto="Eliminar" variante="peligro" onPress={eliminar} ocupado={ocupado} />
+              <Boton texto="Eliminar" icono="trash-outline" variante="peligro" onPress={eliminar} ocupado={ocupado} />
             </View>
           </View>
         </View>
       ) : (
-        <Boton texto="Eliminar producto" variante="peligro" onPress={() => setConfirmandoBorrado(true)} />
+        <Boton texto="Eliminar producto" icono="trash-outline" variante="peligro" onPress={() => setConfirmandoBorrado(true)} />
       )}
 
       {error ? <Text style={styles.error}>{error}</Text> : null}

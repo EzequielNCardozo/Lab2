@@ -60,7 +60,7 @@ export default function InhabilitarProducto() {
         <Text style={styles.error}>
           {errorDeCarga ? errorDeCarga.message : 'No se encontró el producto.'}
         </Text>
-        <Boton texto="Reintentar" onPress={() => refetch()} />
+        <Boton texto="Reintentar" icono="refresh" onPress={() => refetch()} />
       </View>
     )
   }
@@ -96,7 +96,7 @@ export default function InhabilitarProducto() {
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Boton texto="Inhabilitar producto" variante="peligro" onPress={inhabilitar} ocupado={guardando} />
+      <Boton texto="Inhabilitar producto" icono="ban-outline" variante="peligro" onPress={inhabilitar} ocupado={guardando} />
     </ScrollView>
   )
 }

@@ -1,4 +1,5 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import Boton from './Boton'
 import { tema } from '../styles/theme'
 
@@ -25,24 +26,27 @@ export default function EncabezadoCatalogo({
     <View style={styles.encabezado}>
       <View style={styles.sesion}>
         <Text style={styles.atiende}>Atiende: {atiende}</Text>
-        <Boton texto="Cerrar sesión" variante="secundario" onPress={onCerrarSesion} />
+        <Boton texto="Cerrar sesión" icono="log-out-outline" variante="secundario" onPress={onCerrarSesion} />
       </View>
 
-      <TextInput
-        style={styles.buscador}
-        value={busqueda}
-        onChangeText={onBuscar}
-        placeholder="Buscar un producto por nombre"
-        placeholderTextColor={tema.colores.textoSuave}
-        autoCorrect={false}
-      />
+      <View style={styles.buscador}>
+        <Ionicons name="search" size={tema.medidas.icono} color={tema.colores.textoSuave} />
+        <TextInput
+          style={styles.campoBusqueda}
+          value={busqueda}
+          onChangeText={onBuscar}
+          placeholder="Buscar un producto por nombre"
+          placeholderTextColor={tema.colores.textoSuave}
+          autoCorrect={false}
+        />
+      </View>
 
       <View style={styles.acciones}>
         <View style={styles.accion}>
-          <Boton texto="+ Agregar producto" onPress={onAgregar} />
+          <Boton texto="Agregar producto" icono="add-circle-outline" onPress={onAgregar} />
         </View>
         <View style={styles.accion}>
-          <Boton texto="Historial" variante="secundario" onPress={onHistorial} />
+          <Boton texto="Historial" icono="time-outline" variante="secundario" onPress={onHistorial} />
         </View>
       </View>
     </View>
@@ -67,11 +71,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   buscador: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: tema.espaciado.chico,
     backgroundColor: tema.colores.superficie,
     borderColor: tema.colores.borde,
     borderWidth: 1,
     borderRadius: tema.bordes.radio,
-    padding: tema.espaciado.medio,
+    paddingHorizontal: tema.espaciado.medio,
+  },
+  campoBusqueda: {
+    flex: 1,
+    paddingVertical: tema.espaciado.medio,
     fontSize: tema.tipografia.media,
     color: tema.colores.texto,
   },

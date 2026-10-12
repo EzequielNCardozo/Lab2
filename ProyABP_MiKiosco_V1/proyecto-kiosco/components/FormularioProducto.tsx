@@ -67,7 +67,7 @@ export default function FormularioProducto({
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Boton texto={textoBoton} onPress={guardar} ocupado={guardando} />
+      <Boton texto={textoBoton} icono="save-outline" onPress={guardar} ocupado={guardando} />
     </View>
   )
 }

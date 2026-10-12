@@ -1,7 +1,10 @@
 import { traer, enviar } from './api'
 import { obtenerStock } from './productos'
 import { obtenerUsuarios } from './usuarios'
-import type { Movimiento, MovimientoDetallado, NuevoMovimiento } from '../tipos/movimiento'
+import type { Movimiento, MovimientoDetallado, NuevoMovimiento, PaginaHistorial } from '../tipos/movimiento'
+
+// Cuántos movimientos trae cada página del historial
+const POR_PAGINA = 5
 
 /** ingreso o un egreso de stock. */
 export function registrarMovimiento(movimiento: NuevoMovimiento): Promise<void> {
@@ -49,4 +52,15 @@ export async function obtenerHistorial(): Promise<MovimientoDetallado[]> {
       if (fechaUno !== fechaOtro) return fechaOtro.localeCompare(fechaUno)
       return otro.ID - uno.ID
     })
+}
+
+/** Una página del historial. La API no pagina, así que se trae todo y se corta acá. */
+export async function obtenerPaginaHistorial(desde: number): Promise<PaginaHistorial> {
+  const todos = await obtenerHistorial()
+  const hasta = desde + POR_PAGINA
+
+  return {
+    movimientos: todos.slice(desde, hasta),
+    siguiente: hasta < todos.length ? hasta : undefined,
+  }
 }

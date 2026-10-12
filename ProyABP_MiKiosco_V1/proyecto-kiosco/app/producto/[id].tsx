@@ -39,7 +39,7 @@ export default function DetalleProducto() {
     return (
       <View style={styles.centrado}>
         <Text style={styles.error}>{error ? error.message : 'No se encontró el producto.'}</Text>
-        <Boton texto="Reintentar" onPress={() => refetch()} />
+        <Boton texto="Reintentar" icono="refresh" onPress={() => refetch()} />
       </View>
     )
   }
@@ -70,6 +70,7 @@ export default function DetalleProducto() {
       {habilitado ? (
         <Boton
           texto="Registrar movimiento de stock"
+          icono="swap-vertical"
           onPress={() =>
             router.push({ pathname: '/movimiento/[id]', params: { id: producto.ID } })
           }

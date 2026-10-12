@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Text, ScrollView, StyleSheet } from 'react-native'
+import { Text, Image, ScrollView, StyleSheet } from 'react-native'
 import Boton from '../components/Boton'
 import CampoTexto from '../components/CampoTexto'
 import { iniciarSesion } from '../services/usuarios'
@@ -35,6 +35,8 @@ export default function Login() {
 
   return (
     <ScrollView contentContainerStyle={styles.pantalla}>
+      {/* Imagen local: require() la suma al paquete de la app al compilar */}
+      <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" />
       <Text style={styles.titulo}>Kiosco</Text>
 
       <CampoTexto
@@ -56,7 +58,7 @@ export default function Login() {
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Boton texto="Ingresar" onPress={ingresar} ocupado={ingresando} />
+      <Boton texto="Ingresar" icono="log-in-outline" onPress={ingresar} ocupado={ingresando} />
     </ScrollView>
   )
 }
@@ -67,6 +69,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: tema.espaciado.grande,
     gap: tema.espaciado.medio,
+  },
+  logo: {
+    width: tema.medidas.logo,
+    height: tema.medidas.logo,
+    alignSelf: 'center',
   },
   titulo: {
     fontSize: tema.tipografia.grande,

@@ -24,6 +24,10 @@ export interface Tema {
   bordes: {
     radio: number
   }
+  medidas: {
+    logo: number
+    icono: number
+  }
 }
 
 export const tema: Tema = {
@@ -50,5 +54,9 @@ export const tema: Tema = {
   },
   bordes: {
     radio: 10,
+  },
+  medidas: {
+    logo: 120,
+    icono: 20,
   },
 }

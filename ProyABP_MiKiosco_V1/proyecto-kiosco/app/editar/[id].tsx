@@ -37,7 +37,7 @@ export default function EditarProducto() {
     return (
       <View style={styles.centrado}>
         <Text style={styles.error}>{error ? error.message : 'No se encontró el producto.'}</Text>
-        <Boton texto="Reintentar" onPress={() => refetch()} />
+        <Boton texto="Reintentar" icono="refresh" onPress={() => refetch()} />
       </View>
     )
   }

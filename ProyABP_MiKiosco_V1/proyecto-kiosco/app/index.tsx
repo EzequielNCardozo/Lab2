@@ -44,7 +44,7 @@ export default function Inicio() {
           <Text style={styles.error}>
             {`${error.message}.\n\nRevisá que la API de Laboratorio I esté corriendo y que ${API_URL} sea la dirección correcta.`}
           </Text>
-          <Boton texto="Reintentar" onPress={() => refetch()} />
+          <Boton texto="Reintentar" icono="refresh" onPress={() => refetch()} />
         </View>
       )
     }

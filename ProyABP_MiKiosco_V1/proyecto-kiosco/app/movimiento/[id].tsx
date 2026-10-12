@@ -118,7 +118,7 @@ export default function RegistrarMovimiento() {
         <Text style={styles.error}>
           {errorDeCarga ? errorDeCarga.message : 'No se encontró el producto.'}
         </Text>
-        <Boton texto="Reintentar" onPress={() => refetch()} />
+        <Boton texto="Reintentar" icono="refresh" onPress={() => refetch()} />
       </View>
     )
   }
@@ -175,6 +175,7 @@ export default function RegistrarMovimiento() {
 
       <Boton
         texto={tipo === 'I' ? 'Registrar ingreso' : 'Registrar egreso'}
+        icono={tipo === 'I' ? 'arrow-up-circle-outline' : 'arrow-down-circle-outline'}
         onPress={registrar}
         ocupado={guardando}
       />

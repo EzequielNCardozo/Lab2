@@ -24,6 +24,13 @@ export interface MovimientoDetallado {
   fecha: string | null
 }
 
+/** Una página del historial y desde dónde arranca la siguiente. */
+export interface PaginaHistorial {
+  movimientos: MovimientoDetallado[]
+  /** undefined cuando ya no quedan más movimientos. */
+  siguiente: number | undefined
+}
+
 /** Lo que espera POST /api/stock/movimiento. */
 export interface NuevoMovimiento {
   ID_producto: number

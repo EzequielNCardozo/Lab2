@@ -23,9 +23,21 @@ App móvil para gestionar el catálogo y el stock de un kiosco
 
     11- Filtrar el historial por fecha y por usuario
 
-## Mejoras (clase 4)
-    - TanStack Query para traer los datos de la API
-    - Zustand para guardar la sesión del usuario
+## Mejoras por clase
+    Clase 1
+        - Image: logo del kiosco en el login (assets/logo.png, con require)              - Completado
+    Clase 4
+        - TanStack Query para traer los datos de la API                                 - Completado
+        - Zustand para guardar la sesión del usuario                                    - Completado
+        - Íconos con @expo/vector-icons en los botones y en el buscador                 - Completado
+        - SafeAreaView para que la barra del celular no tape los botones                - Completado
+        - Paginación del historial con useInfiniteQuery (de a 5 movimientos)            - Completado
+
+## Mejoras pendientes (correcciones del primer corte)
+    Clase 2
+        - ThemeProvider
+    Clase 3
+        - Tabs
 
 
 ## Base de datos

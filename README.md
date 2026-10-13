@@ -22,10 +22,21 @@ App móvil para gestionar el catálogo y el stock de un kiosco
 ## Features pendientes
 
     11- Filtrar el historial por fecha y por usuario
+    12- Alta, baja y modificación de clientes
+    13- Alta, baja y modificación de proveedores
+    14- Registrar el pedido de un cliente (nota de pedido)
+    15- Facturar un pedido (descuenta el stock)
+    16- Anular un comprobante si se cae la venta (devuelve el stock)
+    17- Consultar la cuenta corriente de un cliente y registrar sus pagos
+    18- Consultar los clientes deudores (saldo y antigüedad de la deuda)
+    19- Registrar una orden de compra a un proveedor
+    20- Recibir la mercadería de una compra (suma el stock automáticamente)
 
 ## Mejoras por clase
     Clase 1
         - Image: logo del kiosco en el login (assets/logo.png, con require)              - Completado
+    Clase 3
+        - Tabs en el catálogo: Todos, Habilitados e Inhabilitados                       - Completado
     Clase 4
         - TanStack Query para traer los datos de la API                                 - Completado
         - Zustand para guardar la sesión del usuario                                    - Completado
@@ -36,8 +47,6 @@ App móvil para gestionar el catálogo y el stock de un kiosco
 ## Mejoras pendientes (correcciones del primer corte)
     Clase 2
         - ThemeProvider
-    Clase 3
-        - Tabs
 
 
 ## Base de datos

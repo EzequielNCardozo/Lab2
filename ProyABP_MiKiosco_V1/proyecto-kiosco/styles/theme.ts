@@ -27,6 +27,7 @@ export interface Tema {
   medidas: {
     logo: number
     icono: number
+    lineaPestana: number
   }
 }
 
@@ -58,5 +59,6 @@ export const tema: Tema = {
   medidas: {
     logo: 120,
     icono: 20,
+    lineaPestana: 3,
   },
 }

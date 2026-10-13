@@ -1,5 +1,6 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 type Props = {
   etiqueta: string
@@ -30,6 +31,9 @@ export default function CampoTexto({
   oculto = false,
   sinCorrector = false,
 }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   return (
     <View style={styles.campo}>
       <Text style={styles.etiqueta}>{etiqueta}</Text>
@@ -38,7 +42,7 @@ export default function CampoTexto({
         value={valor}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={tema.colores.textoSuave}
+        placeholderTextColor={colores.textoSuave}
         multiline={multilinea}
         keyboardType={soloNumeros ? 'numeric' : 'default'}
         maxLength={maximo}
@@ -50,26 +54,28 @@ export default function CampoTexto({
   )
 }
 
-const styles = StyleSheet.create({
-  campo: {
-    gap: tema.espaciado.chico,
-  },
-  etiqueta: {
-    fontSize: tema.tipografia.chica,
-    color: tema.colores.textoSuave,
-    fontWeight: '600',
-  },
-  input: {
-    backgroundColor: tema.colores.superficie,
-    borderColor: tema.colores.borde,
-    borderWidth: 1,
-    borderRadius: tema.bordes.radio,
-    padding: tema.espaciado.medio,
-    fontSize: tema.tipografia.media,
-    color: tema.colores.texto,
-  },
-  inputMultilinea: {
-    minHeight: 80,
-    textAlignVertical: 'top',
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    campo: {
+      gap: tema.espaciado.chico,
+    },
+    etiqueta: {
+      fontSize: tema.tipografia.chica,
+      color: colores.textoSuave,
+      fontWeight: '600',
+    },
+    input: {
+      backgroundColor: colores.superficie,
+      borderColor: colores.borde,
+      borderWidth: 1,
+      borderRadius: tema.bordes.radio,
+      padding: tema.espaciado.medio,
+      fontSize: tema.tipografia.media,
+      color: colores.texto,
+    },
+    inputMultilinea: {
+      minHeight: 80,
+      textAlignVertical: 'top',
+    },
+  })
+}

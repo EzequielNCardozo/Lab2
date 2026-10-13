@@ -5,4 +5,4 @@
  * `localhost`, así funciona también desde el celular; si el router la cambia,
  * se saca con `ipconfig` y se actualiza acá. El `/api` del final va incluido.
  */
-export const API_URL = 'http://192.168.X.X:3001/api'
+export const API_URL = 'http://192.168.100.14:3001/api'

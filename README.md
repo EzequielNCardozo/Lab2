@@ -35,6 +35,8 @@ App móvil para gestionar el catálogo y el stock de un kiosco
 ## Mejoras por clase
     Clase 1
         - Image: logo del kiosco en el login (assets/logo.png, con require)              - Completado
+    Clase 2
+        - ThemeProvider: modo claro y oscuro según la configuración del celular         - Completado
     Clase 3
         - Tabs en el catálogo: Todos, Habilitados e Inhabilitados                       - Completado
     Clase 4
@@ -43,11 +45,6 @@ App móvil para gestionar el catálogo y el stock de un kiosco
         - Íconos con @expo/vector-icons en los botones y en el buscador                 - Completado
         - SafeAreaView para que la barra del celular no tape los botones                - Completado
         - Paginación del historial con useInfiniteQuery (de a 5 movimientos)            - Completado
-
-## Mejoras pendientes (correcciones del primer corte)
-    Clase 2
-        - ThemeProvider
-
 
 ## Base de datos
     - DB_ParLab_completo.sql: crea la base desde cero, con los datos iniciales.

@@ -7,10 +7,14 @@ import CampoTexto from '../../components/CampoTexto'
 import Dato from '../../components/Dato'
 import { cambiarEstadoProducto, obtenerProductoConStock } from '../../services/productos'
 import { useSesion } from '../../store/sesion'
-import { tema } from '../../styles/theme'
+import { tema, type Colores } from '../../styles/theme'
+import { useColores } from '../../hooks/useColores'
 
 /** Pantalla para dar de baja un producto: pide el motivo, que queda guardado. */
 export default function InhabilitarProducto() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -49,7 +53,7 @@ export default function InhabilitarProducto() {
   if (isLoading) {
     return (
       <View style={styles.centrado}>
-        <ActivityIndicator size="large" color={tema.colores.secundario} />
+        <ActivityIndicator size="large" color={colores.secundario} />
       </View>
     )
   }
@@ -101,26 +105,28 @@ export default function InhabilitarProducto() {
   )
 }
 
-const styles = StyleSheet.create({
-  pantalla: {
-    padding: tema.espaciado.medio,
-    gap: tema.espaciado.medio,
-  },
-  centrado: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tema.espaciado.grande,
-    gap: tema.espaciado.medio,
-  },
-  mensaje: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.textoSuave,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-    textAlign: 'center',
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    pantalla: {
+      padding: tema.espaciado.medio,
+      gap: tema.espaciado.medio,
+    },
+    centrado: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: tema.espaciado.grande,
+      gap: tema.espaciado.medio,
+    },
+    mensaje: {
+      fontSize: tema.tipografia.media,
+      color: colores.textoSuave,
+      textAlign: 'center',
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+      textAlign: 'center',
+    },
+  })
+}

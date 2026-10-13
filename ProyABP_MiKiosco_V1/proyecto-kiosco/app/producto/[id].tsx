@@ -6,10 +6,14 @@ import AccionesProducto from '../../components/AccionesProducto'
 import Dato from '../../components/Dato'
 import { obtenerProductoConStock } from '../../services/productos'
 import { formatearFecha } from '../../utils/fecha'
-import { tema } from '../../styles/theme'
+import { tema, type Colores } from '../../styles/theme'
+import { useColores } from '../../hooks/useColores'
 
 /** El detalle de un producto. El id llega en la ruta (`/producto/4`) como texto. */
 export default function DetalleProducto() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const idProducto = Number(id)
@@ -30,7 +34,7 @@ export default function DetalleProducto() {
   if (isLoading) {
     return (
       <View style={styles.centrado}>
-        <ActivityIndicator size="large" color={tema.colores.secundario} />
+        <ActivityIndicator size="large" color={colores.secundario} />
       </View>
     )
   }
@@ -86,30 +90,32 @@ export default function DetalleProducto() {
   )
 }
 
-const styles = StyleSheet.create({
-  pantalla: {
-    padding: tema.espaciado.medio,
-    gap: tema.espaciado.medio,
-  },
-  centrado: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tema.espaciado.grande,
-    gap: tema.espaciado.medio,
-  },
-  nombre: {
-    fontSize: tema.tipografia.grande,
-    fontWeight: '700',
-    color: tema.colores.texto,
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-    textAlign: 'center',
-  },
-  aviso: {
-    fontSize: tema.tipografia.chica,
-    color: tema.colores.textoSuave,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    pantalla: {
+      padding: tema.espaciado.medio,
+      gap: tema.espaciado.medio,
+    },
+    centrado: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: tema.espaciado.grande,
+      gap: tema.espaciado.medio,
+    },
+    nombre: {
+      fontSize: tema.tipografia.grande,
+      fontWeight: '700',
+      color: colores.texto,
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+      textAlign: 'center',
+    },
+    aviso: {
+      fontSize: tema.tipografia.chica,
+      color: colores.textoSuave,
+    },
+  })
+}

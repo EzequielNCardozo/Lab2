@@ -1,6 +1,7 @@
 import { Text, Pressable, ActivityIndicator, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 type Props = {
   texto: string
@@ -15,10 +16,12 @@ type Props = {
 
 /** El botón de toda la app. */
 export default function Boton({ texto, onPress, variante = 'principal', ocupado = false, icono }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const esSecundario = variante === 'secundario'
   const esPeligro = variante === 'peligro'
-  const conFondoClaro = esSecundario || esPeligro
-  const colorTexto = esPeligro ? tema.colores.error : esSecundario ? tema.colores.texto : tema.colores.superficie
+  const colorTexto = esPeligro ? colores.error : esSecundario ? colores.texto : colores.textoSobrePrimario
 
   return (
     <Pressable
@@ -32,7 +35,7 @@ export default function Boton({ texto, onPress, variante = 'principal', ocupado 
       disabled={ocupado}
     >
       {ocupado ? (
-        <ActivityIndicator color={conFondoClaro ? tema.colores.primario : tema.colores.superficie} />
+        <ActivityIndicator color={colorTexto} />
       ) : (
         <>
           {icono ? <Ionicons name={icono} size={tema.medidas.icono} color={colorTexto} /> : null}
@@ -47,39 +50,41 @@ export default function Boton({ texto, onPress, variante = 'principal', ocupado 
   )
 }
 
-const styles = StyleSheet.create({
-  boton: {
-    backgroundColor: tema.colores.primario,
-    borderColor: tema.colores.primario,
-    borderWidth: 1,
-    borderRadius: tema.bordes.radio,
-    paddingVertical: tema.espaciado.medio,
-    paddingHorizontal: tema.espaciado.grande,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: tema.espaciado.chico,
-  },
-  botonSecundario: {
-    backgroundColor: tema.colores.superficie,
-    borderColor: tema.colores.borde,
-  },
-  botonPeligro: {
-    backgroundColor: tema.colores.superficie,
-    borderColor: tema.colores.error,
-  },
-  botonOcupado: {
-    opacity: 0.6,
-  },
-  texto: {
-    color: tema.colores.superficie,
-    fontSize: tema.tipografia.media,
-    fontWeight: '600',
-  },
-  textoSecundario: {
-    color: tema.colores.texto,
-  },
-  textoPeligro: {
-    color: tema.colores.error,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    boton: {
+      backgroundColor: colores.primario,
+      borderColor: colores.primario,
+      borderWidth: 1,
+      borderRadius: tema.bordes.radio,
+      paddingVertical: tema.espaciado.medio,
+      paddingHorizontal: tema.espaciado.grande,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: tema.espaciado.chico,
+    },
+    botonSecundario: {
+      backgroundColor: colores.superficie,
+      borderColor: colores.borde,
+    },
+    botonPeligro: {
+      backgroundColor: colores.superficie,
+      borderColor: colores.error,
+    },
+    botonOcupado: {
+      opacity: 0.6,
+    },
+    texto: {
+      color: colores.textoSobrePrimario,
+      fontSize: tema.tipografia.media,
+      fontWeight: '600',
+    },
+    textoSecundario: {
+      color: colores.texto,
+    },
+    textoPeligro: {
+      color: colores.error,
+    },
+  })
+}

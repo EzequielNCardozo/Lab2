@@ -3,10 +3,14 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import Boton from '../components/Boton'
 import FilaMovimiento from '../components/FilaMovimiento'
 import { obtenerPaginaHistorial } from '../services/movimientos'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 /** El historial de todos los movimientos de stock, del más nuevo al más viejo. */
 export default function Historial() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   // Trae el historial de a páginas: la siguiente se pide al llegar al final de la lista
   const { data, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
@@ -22,7 +26,7 @@ export default function Historial() {
   if (isLoading) {
     return (
       <View style={styles.centrado}>
-        <ActivityIndicator size="large" color={tema.colores.secundario} />
+        <ActivityIndicator size="large" color={colores.secundario} />
         <Text style={styles.mensaje}>Cargando movimientos…</Text>
       </View>
     )
@@ -55,31 +59,33 @@ export default function Historial() {
       renderItem={({ item }) => <FilaMovimiento movimiento={item} />}
       onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
       ListFooterComponent={
-        isFetchingNextPage ? <ActivityIndicator color={tema.colores.secundario} /> : null
+        isFetchingNextPage ? <ActivityIndicator color={colores.secundario} /> : null
       }
     />
   )
 }
 
-const styles = StyleSheet.create({
-  lista: {
-    padding: tema.espaciado.medio,
-  },
-  centrado: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tema.espaciado.grande,
-    gap: tema.espaciado.medio,
-  },
-  mensaje: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.textoSuave,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-    textAlign: 'center',
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    lista: {
+      padding: tema.espaciado.medio,
+    },
+    centrado: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: tema.espaciado.grande,
+      gap: tema.espaciado.medio,
+    },
+    mensaje: {
+      fontSize: tema.tipografia.media,
+      color: colores.textoSuave,
+      textAlign: 'center',
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+      textAlign: 'center',
+    },
+  })
+}

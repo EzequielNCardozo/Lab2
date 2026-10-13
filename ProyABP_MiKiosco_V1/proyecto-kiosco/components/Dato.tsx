@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 type Props = {
   etiqueta: string
@@ -10,6 +11,9 @@ type Props = {
 
 /** Un dato con su etiqueta arriba, como los muestra el detalle del producto. */
 export default function Dato({ etiqueta, valor, destacado = false }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   return (
     <View style={styles.dato}>
       <Text style={styles.etiqueta}>{etiqueta}</Text>
@@ -18,22 +22,24 @@ export default function Dato({ etiqueta, valor, destacado = false }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
-  dato: {
-    gap: 2,
-  },
-  etiqueta: {
-    fontSize: tema.tipografia.chica,
-    color: tema.colores.textoSuave,
-    fontWeight: '600',
-  },
-  valor: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.texto,
-  },
-  valorDestacado: {
-    fontSize: tema.tipografia.grande,
-    fontWeight: '700',
-    color: tema.colores.primario,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    dato: {
+      gap: 2,
+    },
+    etiqueta: {
+      fontSize: tema.tipografia.chica,
+      color: colores.textoSuave,
+      fontWeight: '600',
+    },
+    valor: {
+      fontSize: tema.tipografia.media,
+      color: colores.texto,
+    },
+    valorDestacado: {
+      fontSize: tema.tipografia.grande,
+      fontWeight: '700',
+      color: colores.primario,
+    },
+  })
+}

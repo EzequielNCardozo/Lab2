@@ -9,7 +9,8 @@ import SelectorChips from '../../components/SelectorChips'
 import { crearStockInicial, obtenerProductoConStock } from '../../services/productos'
 import { registrarMovimiento } from '../../services/movimientos'
 import { useSesion } from '../../store/sesion'
-import { tema } from '../../styles/theme'
+import { tema, type Colores } from '../../styles/theme'
+import { useColores } from '../../hooks/useColores'
 
 /** Los valores son los que espera la API: 'I' suma, 'E' resta. */
 const TIPOS = [
@@ -19,6 +20,9 @@ const TIPOS = [
 
 /** Formulario para registrar un ingreso o un egreso de stock a nombre de quien inició sesión. */
 export default function RegistrarMovimiento() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -107,7 +111,7 @@ export default function RegistrarMovimiento() {
   if (isLoading) {
     return (
       <View style={styles.centrado}>
-        <ActivityIndicator size="large" color={tema.colores.secundario} />
+        <ActivityIndicator size="large" color={colores.secundario} />
       </View>
     )
   }
@@ -183,25 +187,27 @@ export default function RegistrarMovimiento() {
   )
 }
 
-const styles = StyleSheet.create({
-  pantalla: {
-    padding: tema.espaciado.medio,
-    gap: tema.espaciado.medio,
-  },
-  centrado: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tema.espaciado.grande,
-    gap: tema.espaciado.medio,
-  },
-  mensaje: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.textoSuave,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    pantalla: {
+      padding: tema.espaciado.medio,
+      gap: tema.espaciado.medio,
+    },
+    centrado: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: tema.espaciado.grande,
+      gap: tema.espaciado.medio,
+    },
+    mensaje: {
+      fontSize: tema.tipografia.media,
+      color: colores.textoSuave,
+      textAlign: 'center',
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+    },
+  })
+}

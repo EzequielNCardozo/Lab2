@@ -5,7 +5,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import Boton from './Boton'
 import { cambiarEstadoProducto, eliminarProducto } from '../services/productos'
 import { useSesion } from '../store/sesion'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 import type { ProductoConStock } from '../tipos/producto'
 
 type Props = {
@@ -14,6 +15,9 @@ type Props = {
 
 /** Los botones para modificar, habilitar o inhabilitar y eliminar un producto. */
 export default function AccionesProducto({ producto }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const router = useRouter()
   const queryClient = useQueryClient()
   const usuario = useSesion((estado) => estado.usuario)
@@ -96,30 +100,32 @@ export default function AccionesProducto({ producto }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
-  acciones: {
-    gap: tema.espaciado.chico,
-  },
-  confirmacion: {
-    gap: tema.espaciado.chico,
-    borderColor: tema.colores.error,
-    borderWidth: 1,
-    borderRadius: tema.bordes.radio,
-    padding: tema.espaciado.medio,
-  },
-  pregunta: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.texto,
-  },
-  fila: {
-    flexDirection: 'row',
-    gap: tema.espaciado.chico,
-  },
-  opcion: {
-    flex: 1,
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    acciones: {
+      gap: tema.espaciado.chico,
+    },
+    confirmacion: {
+      gap: tema.espaciado.chico,
+      borderColor: colores.error,
+      borderWidth: 1,
+      borderRadius: tema.bordes.radio,
+      padding: tema.espaciado.medio,
+    },
+    pregunta: {
+      fontSize: tema.tipografia.media,
+      color: colores.texto,
+    },
+    fila: {
+      flexDirection: 'row',
+      gap: tema.espaciado.chico,
+    },
+    opcion: {
+      flex: 1,
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+    },
+  })
+}

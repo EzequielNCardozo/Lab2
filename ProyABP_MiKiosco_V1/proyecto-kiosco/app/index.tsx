@@ -9,10 +9,14 @@ import PestanasCatalogo, { type Pestana } from '../components/PestanasCatalogo'
 import { obtenerProductosConStock } from '../services/productos'
 import { useSesion } from '../store/sesion'
 import { API_URL } from '../config'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 /** Pantalla principal: el listado de productos con su stock, las pestañas y el buscador. */
 export default function Inicio() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const router = useRouter()
   const { usuario, salir } = useSesion()
   const [busqueda, setBusqueda] = useState('')
@@ -35,7 +39,7 @@ export default function Inicio() {
     if (isLoading) {
       return (
         <View style={styles.centrado}>
-          <ActivityIndicator size="large" color={tema.colores.secundario} />
+          <ActivityIndicator size="large" color={colores.secundario} />
           <Text style={styles.mensaje}>Cargando productos…</Text>
         </View>
       )
@@ -97,29 +101,31 @@ export default function Inicio() {
   )
 }
 
-const styles = StyleSheet.create({
-  pantalla: {
-    flex: 1,
-    padding: tema.espaciado.medio,
-  },
-  lista: {
-    flex: 1,
-  },
-  centrado: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: tema.espaciado.grande,
-    gap: tema.espaciado.medio,
-  },
-  mensaje: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.textoSuave,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-    textAlign: 'center',
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    pantalla: {
+      flex: 1,
+      padding: tema.espaciado.medio,
+    },
+    lista: {
+      flex: 1,
+    },
+    centrado: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: tema.espaciado.grande,
+      gap: tema.espaciado.medio,
+    },
+    mensaje: {
+      fontSize: tema.tipografia.media,
+      color: colores.textoSuave,
+      textAlign: 'center',
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+      textAlign: 'center',
+    },
+  })
+}

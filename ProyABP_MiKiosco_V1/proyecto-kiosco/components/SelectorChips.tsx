@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import Chip from './Chip'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 type Opcion = {
   valor: string
@@ -21,6 +22,9 @@ type Props = {
  * Los valores van como texto; la pantalla los convierte si hace falta.
  */
 export default function SelectorChips({ etiqueta, opciones, elegido, onElegir }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   return (
     <View style={styles.selector}>
       <Text style={styles.etiqueta}>{etiqueta}</Text>
@@ -38,18 +42,20 @@ export default function SelectorChips({ etiqueta, opciones, elegido, onElegir }:
   )
 }
 
-const styles = StyleSheet.create({
-  selector: {
-    gap: tema.espaciado.chico,
-  },
-  etiqueta: {
-    fontSize: tema.tipografia.chica,
-    color: tema.colores.textoSuave,
-    fontWeight: '600',
-  },
-  opciones: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: tema.espaciado.chico,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    selector: {
+      gap: tema.espaciado.chico,
+    },
+    etiqueta: {
+      fontSize: tema.tipografia.chica,
+      color: colores.textoSuave,
+      fontWeight: '600',
+    },
+    opciones: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: tema.espaciado.chico,
+    },
+  })
+}

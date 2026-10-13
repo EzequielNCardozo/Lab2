@@ -4,10 +4,14 @@ import Boton from '../components/Boton'
 import CampoTexto from '../components/CampoTexto'
 import { iniciarSesion } from '../services/usuarios'
 import { useSesion } from '../store/sesion'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 /** Pantalla para entrar con usuario y contraseña. */
 export default function Login() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const entrar = useSesion((estado) => estado.entrar)
 
   const [usuario, setUsuario] = useState('')
@@ -63,27 +67,29 @@ export default function Login() {
   )
 }
 
-const styles = StyleSheet.create({
-  pantalla: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: tema.espaciado.grande,
-    gap: tema.espaciado.medio,
-  },
-  logo: {
-    width: tema.medidas.logo,
-    height: tema.medidas.logo,
-    alignSelf: 'center',
-  },
-  titulo: {
-    fontSize: tema.tipografia.grande,
-    fontWeight: '700',
-    color: tema.colores.texto,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-    textAlign: 'center',
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    pantalla: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      padding: tema.espaciado.grande,
+      gap: tema.espaciado.medio,
+    },
+    logo: {
+      width: tema.medidas.logo,
+      height: tema.medidas.logo,
+      alignSelf: 'center',
+    },
+    titulo: {
+      fontSize: tema.tipografia.grande,
+      fontWeight: '700',
+      color: colores.texto,
+      textAlign: 'center',
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+      textAlign: 'center',
+    },
+  })
+}

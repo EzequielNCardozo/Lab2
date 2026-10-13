@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Boton from './Boton'
 import CampoTexto from './CampoTexto'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 type Props = {
   /** Valores con los que arranca: vacíos en el alta, los actuales al modificar. */
@@ -20,6 +21,9 @@ export default function FormularioProducto({
   textoBoton,
   onGuardar,
 }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const [nombre, setNombre] = useState(nombreInicial)
   const [descripcion, setDescripcion] = useState(descripcionInicial)
   const [guardando, setGuardando] = useState(false)
@@ -72,12 +76,14 @@ export default function FormularioProducto({
   )
 }
 
-const styles = StyleSheet.create({
-  formulario: {
-    gap: tema.espaciado.medio,
-  },
-  error: {
-    fontSize: tema.tipografia.media,
-    color: tema.colores.error,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    formulario: {
+      gap: tema.espaciado.medio,
+    },
+    error: {
+      fontSize: tema.tipografia.media,
+      color: colores.error,
+    },
+  })
+}

@@ -1,7 +1,8 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import Boton from './Boton'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 type Props = {
   /** Nombre de quien inició sesión. */
@@ -22,6 +23,9 @@ export default function EncabezadoCatalogo({
   onAgregar,
   onHistorial,
 }: Props) {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   return (
     <View style={styles.encabezado}>
       <View style={styles.sesion}>
@@ -30,13 +34,13 @@ export default function EncabezadoCatalogo({
       </View>
 
       <View style={styles.buscador}>
-        <Ionicons name="search" size={tema.medidas.icono} color={tema.colores.textoSuave} />
+        <Ionicons name="search" size={tema.medidas.icono} color={colores.textoSuave} />
         <TextInput
           style={styles.campoBusqueda}
           value={busqueda}
           onChangeText={onBuscar}
           placeholder="Buscar un producto por nombre"
-          placeholderTextColor={tema.colores.textoSuave}
+          placeholderTextColor={colores.textoSuave}
           autoCorrect={false}
         />
       </View>
@@ -53,44 +57,46 @@ export default function EncabezadoCatalogo({
   )
 }
 
-const styles = StyleSheet.create({
-  encabezado: {
-    gap: tema.espaciado.chico,
-    paddingBottom: tema.espaciado.medio,
-  },
-  sesion: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: tema.espaciado.chico,
-  },
-  atiende: {
-    flex: 1,
-    fontSize: tema.tipografia.media,
-    color: tema.colores.texto,
-    fontWeight: '600',
-  },
-  buscador: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: tema.espaciado.chico,
-    backgroundColor: tema.colores.superficie,
-    borderColor: tema.colores.borde,
-    borderWidth: 1,
-    borderRadius: tema.bordes.radio,
-    paddingHorizontal: tema.espaciado.medio,
-  },
-  campoBusqueda: {
-    flex: 1,
-    paddingVertical: tema.espaciado.medio,
-    fontSize: tema.tipografia.media,
-    color: tema.colores.texto,
-  },
-  acciones: {
-    flexDirection: 'row',
-    gap: tema.espaciado.chico,
-  },
-  accion: {
-    flex: 1,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    encabezado: {
+      gap: tema.espaciado.chico,
+      paddingBottom: tema.espaciado.medio,
+    },
+    sesion: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: tema.espaciado.chico,
+    },
+    atiende: {
+      flex: 1,
+      fontSize: tema.tipografia.media,
+      color: colores.texto,
+      fontWeight: '600',
+    },
+    buscador: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: tema.espaciado.chico,
+      backgroundColor: colores.superficie,
+      borderColor: colores.borde,
+      borderWidth: 1,
+      borderRadius: tema.bordes.radio,
+      paddingHorizontal: tema.espaciado.medio,
+    },
+    campoBusqueda: {
+      flex: 1,
+      paddingVertical: tema.espaciado.medio,
+      fontSize: tema.tipografia.media,
+      color: colores.texto,
+    },
+    acciones: {
+      flexDirection: 'row',
+      gap: tema.espaciado.chico,
+    },
+    accion: {
+      flex: 1,
+    },
+  })
+}

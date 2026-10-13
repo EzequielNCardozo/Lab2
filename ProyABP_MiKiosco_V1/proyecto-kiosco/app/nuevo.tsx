@@ -3,10 +3,14 @@ import { useRouter } from 'expo-router'
 import { useQueryClient } from '@tanstack/react-query'
 import FormularioProducto from '../components/FormularioProducto'
 import { agregarProducto } from '../services/productos'
-import { tema } from '../styles/theme'
+import { tema, type Colores } from '../styles/theme'
+import { useColores } from '../hooks/useColores'
 
 /** Pantalla de alta de un producto. */
 export default function Nuevo() {
+  const colores = useColores()
+  const styles = crearEstilos(colores)
+
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -31,19 +35,21 @@ export default function Nuevo() {
   )
 }
 
-const styles = StyleSheet.create({
-  pantalla: {
-    padding: tema.espaciado.medio,
-    gap: tema.espaciado.medio,
-  },
-  nota: {
-    borderColor: tema.colores.borde,
-    borderWidth: 1,
-    borderRadius: tema.bordes.radio,
-    padding: tema.espaciado.medio,
-  },
-  textoNota: {
-    fontSize: tema.tipografia.chica,
-    color: tema.colores.textoSuave,
-  },
-})
+function crearEstilos(colores: Colores) {
+  return StyleSheet.create({
+    pantalla: {
+      padding: tema.espaciado.medio,
+      gap: tema.espaciado.medio,
+    },
+    nota: {
+      borderColor: colores.borde,
+      borderWidth: 1,
+      borderRadius: tema.bordes.radio,
+      padding: tema.espaciado.medio,
+    },
+    textoNota: {
+      fontSize: tema.tipografia.chica,
+      color: colores.textoSuave,
+    },
+  })
+}

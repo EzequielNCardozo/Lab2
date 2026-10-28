@@ -8,6 +8,10 @@ export interface Producto {
   motivo_baja: string | null
   ID_usuario_baja: number | null
   fecha_baja: string | null
+  /** null si todavía no se le cargó. */
+  codigo_barras: string | null
+  /** null si el producto no entra en el pedido de reposición. */
+  stock_minimo: number | null
 }
 
 /**

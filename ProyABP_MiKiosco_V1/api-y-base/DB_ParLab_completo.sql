@@ -1,6 +1,6 @@
 
 
-CREATE DATABASE IF NOT EXISTS DB_ParLab 
+CREATE DATABASE IF NOT EXISTS DB_ParLab;
 USE DB_ParLab;
 
 
@@ -39,6 +39,8 @@ CREATE TABLE Producto (
     motivo_baja VARCHAR(200) NULL,
     ID_usuario_baja INT NULL,
     fecha_baja DATE NULL,
+    codigo_barras VARCHAR(13) NULL UNIQUE,         -- opcional; lo usa la app movil
+    stock_minimo INT NULL,                         -- opcional; pedido de reposicion
     CONSTRAINT fk_prod_baja FOREIGN KEY (ID_usuario_baja)
         REFERENCES Usuario(ID) ON DELETE SET NULL
 );
@@ -69,26 +71,76 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS SP_ListaProductosAll $$
 CREATE PROCEDURE SP_ListaProductosAll()
 BEGIN
-    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja FROM Producto;
+    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja,
+           codigo_barras, stock_minimo
+    FROM Producto;
 END$$
 
 DROP PROCEDURE IF EXISTS SP_ListaProductosID $$
 CREATE PROCEDURE SP_ListaProductosID(IN p_ID INT)
 BEGIN
-    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja
+    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja,
+           codigo_barras, stock_minimo
     FROM Producto WHERE ID = p_ID;
 END$$
 
 DROP PROCEDURE IF EXISTS SP_AgregarProducto $$
-CREATE PROCEDURE SP_AgregarProducto(IN p_nombre VARCHAR(50), IN p_descripcion VARCHAR(100))
+CREATE PROCEDURE SP_AgregarProducto(
+    IN p_nombre VARCHAR(50),
+    IN p_descripcion VARCHAR(100),
+    IN p_codigo_barras VARCHAR(13),
+    IN p_stock_minimo INT
+)
 BEGIN
-    INSERT INTO Producto (nombre, descripcion) VALUES (p_nombre, p_descripcion);
+    SET p_codigo_barras = NULLIF(TRIM(p_codigo_barras), '');
+
+    IF p_codigo_barras IS NOT NULL
+       AND EXISTS (SELECT 1 FROM Producto WHERE codigo_barras = p_codigo_barras) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Ya existe un producto con ese codigo de barras.';
+    END IF;
+
+    IF p_stock_minimo < 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El stock minimo no puede ser negativo.';
+    END IF;
+
+    INSERT INTO Producto (nombre, descripcion, codigo_barras, stock_minimo)
+    VALUES (p_nombre, p_descripcion, p_codigo_barras, p_stock_minimo);
 END$$
 
 DROP PROCEDURE IF EXISTS SP_ActualizarProducto $$
-CREATE PROCEDURE SP_ActualizarProducto(IN p_ID INT, IN p_nombre VARCHAR(50), IN p_descripcion VARCHAR(100))
+CREATE PROCEDURE SP_ActualizarProducto(
+    IN p_ID INT,
+    IN p_nombre VARCHAR(50),
+    IN p_descripcion VARCHAR(100),
+    IN p_con_codigo_y_minimo TINYINT,
+    IN p_codigo_barras VARCHAR(13),
+    IN p_stock_minimo INT
+)
 BEGIN
-    UPDATE Producto SET nombre = p_nombre, descripcion = p_descripcion WHERE ID = p_ID;
+    IF p_con_codigo_y_minimo = 0 THEN
+        UPDATE Producto SET nombre = p_nombre, descripcion = p_descripcion WHERE ID = p_ID;
+    ELSE
+        SET p_codigo_barras = NULLIF(TRIM(p_codigo_barras), '');
+
+        IF p_codigo_barras IS NOT NULL
+           AND EXISTS (SELECT 1 FROM Producto
+                       WHERE codigo_barras = p_codigo_barras AND ID <> p_ID) THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Ya existe un producto con ese codigo de barras.';
+        END IF;
+
+        IF p_stock_minimo < 0 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'El stock minimo no puede ser negativo.';
+        END IF;
+
+        UPDATE Producto
+        SET nombre = p_nombre, descripcion = p_descripcion,
+            codigo_barras = p_codigo_barras, stock_minimo = p_stock_minimo
+        WHERE ID = p_ID;
+    END IF;
 END$$
 
 DROP PROCEDURE IF EXISTS SP_CambiarEstadoProducto $$

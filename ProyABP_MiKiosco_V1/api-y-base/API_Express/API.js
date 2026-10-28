@@ -45,21 +45,27 @@ app.get('/api/productos/:id', async (req, res) => {
 
 app.post('/api/productos', async (req, res) => {
     try {
-        const { nombre, descripcion } = req.body;
-        await db.query('CALL SP_AgregarProducto(?, ?)', [nombre, descripcion]);
+        const { nombre, descripcion, codigo_barras, stock_minimo } = req.body;
+        await db.query('CALL SP_AgregarProducto(?, ?, ?, ?)', [
+            nombre, descripcion, codigo_barras ?? null, stock_minimo ?? null
+        ]);
         res.status(201).json({ message: "Producto agregado correctamente" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(httpStatusFor(error)).json({ error: error.message });
     }
 });
 
 app.put('/api/productos/:id', async (req, res) => {
     try {
-        const { nombre, descripcion } = req.body;
-        await db.query('CALL SP_ActualizarProducto(?, ?, ?)', [req.params.id, nombre, descripcion]);
+        const { nombre, descripcion, codigo_barras, stock_minimo } = req.body;
+        // El frontend web no manda estos campos: sin ellos, la base conserva los que ya tiene
+        const conCodigoYMinimo = codigo_barras !== undefined || stock_minimo !== undefined ? 1 : 0;
+        await db.query('CALL SP_ActualizarProducto(?, ?, ?, ?, ?, ?)', [
+            req.params.id, nombre, descripcion, conCodigoYMinimo, codigo_barras ?? null, stock_minimo ?? null
+        ]);
         res.json({ message: "Producto actualizado" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(httpStatusFor(error)).json({ error: error.message });
     }
 });
 

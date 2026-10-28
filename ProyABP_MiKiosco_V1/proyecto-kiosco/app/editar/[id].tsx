@@ -23,7 +23,14 @@ export default function EditarProducto() {
   })
 
   async function guardar(nombre: string, descripcion: string) {
-    await modificarProducto(idProducto, nombre, descripcion)
+    // Hasta que el formulario tenga los campos, se mandan los que ya tiene
+    await modificarProducto(
+      idProducto,
+      nombre,
+      descripcion,
+      producto?.codigo_barras ?? '',
+      producto?.stock_minimo ?? null
+    )
     // El nombre se ve en el listado, el detalle y el historial
     queryClient.invalidateQueries()
     router.back()

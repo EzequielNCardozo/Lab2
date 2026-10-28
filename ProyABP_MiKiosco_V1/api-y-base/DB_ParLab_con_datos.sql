@@ -71,10 +71,13 @@ CREATE TABLE `producto` (
   `motivo_baja` varchar(200) DEFAULT NULL,
   `ID_usuario_baja` int DEFAULT NULL,
   `fecha_baja` date DEFAULT NULL,
+  `codigo_barras` varchar(13) DEFAULT NULL,
+  `stock_minimo` int DEFAULT NULL,
   PRIMARY KEY (`ID`),
+  UNIQUE KEY `codigo_barras` (`codigo_barras`),
   KEY `fk_prod_baja` (`ID_usuario_baja`),
   CONSTRAINT `fk_prod_baja` FOREIGN KEY (`ID_usuario_baja`) REFERENCES `usuario` (`ID`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -83,7 +86,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (1,'Alfajor Jorgito','Chocolate 70g',0,'prueba',1,'2026-06-11'),(5,'Alfajor Guaymallen','Chocolate',1,NULL,NULL,NULL),(6,'Chicles Beldent','Menta',1,NULL,NULL,NULL),(7,'Galletitas Oreo','Original',1,NULL,NULL,NULL),(8,'Papas Lays','Clasicas 145g',1,NULL,NULL,NULL),(9,'Chocolate Milka','Leche 100g',1,NULL,NULL,NULL),(10,'Caramelos Sugus','Surtidos',1,NULL,NULL,NULL),(11,'Cigarrillos Marlboro','Box 20',1,NULL,NULL,NULL),(12,'Yerba Playadito 1kg','Con palo',1,NULL,NULL,NULL),(13,'Cafe La Virginia','Molido 250g',1,NULL,NULL,NULL),(14,'Turron Arcor','Mani',1,NULL,NULL,NULL),(15,'Pancho Especial','Con papas',1,NULL,NULL,NULL);
+INSERT INTO `producto` VALUES (1,'Alfajor Jorgito','Chocolate 70g',0,'Prueba',1,'2026-10-12',NULL,NULL),(5,'Alfajor Guaymallen','Chocolate',1,NULL,NULL,NULL,NULL,NULL),(6,'Chicles Beldent','Menta',1,NULL,NULL,NULL,NULL,NULL),(7,'Galletitas Oreo','Original',1,NULL,NULL,NULL,NULL,NULL),(8,'Papas Lays','Clasicas 145g',1,NULL,NULL,NULL,NULL,NULL),(9,'Chocolate Milka','Leche 100g',1,NULL,NULL,NULL,NULL,NULL),(10,'Caramelos Sugus','Surtidos',1,NULL,NULL,NULL,NULL,NULL),(11,'Cigarrillos Marlboro','Box 20',1,NULL,NULL,NULL,NULL,NULL),(12,'Yerba Playadito 1kg','Con palo',1,NULL,NULL,NULL,NULL,NULL),(13,'Cafe La Virginia','Molido 250g',1,NULL,NULL,NULL,NULL,NULL),(14,'Turron Arcor','Mani',1,NULL,NULL,NULL,NULL,NULL),(15,'Pancho Especial','Con papas',1,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,12 +168,34 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ActualizarProducto`(
     IN p_ID INT,
     IN p_nombre VARCHAR(50),
-    IN p_descripcion VARCHAR(100)
+    IN p_descripcion VARCHAR(100),
+    IN p_con_codigo_y_minimo TINYINT,
+    IN p_codigo_barras VARCHAR(13),
+    IN p_stock_minimo INT
 )
 BEGIN
-    UPDATE Producto
-    SET nombre = p_nombre, descripcion = p_descripcion
-    WHERE ID = p_ID;
+    IF p_con_codigo_y_minimo = 0 THEN
+        UPDATE Producto SET nombre = p_nombre, descripcion = p_descripcion WHERE ID = p_ID;
+    ELSE
+        SET p_codigo_barras = NULLIF(TRIM(p_codigo_barras), '');
+
+        IF p_codigo_barras IS NOT NULL
+           AND EXISTS (SELECT 1 FROM Producto
+                       WHERE codigo_barras = p_codigo_barras AND ID <> p_ID) THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Ya existe un producto con ese codigo de barras.';
+        END IF;
+
+        IF p_stock_minimo < 0 THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'El stock minimo no puede ser negativo.';
+        END IF;
+
+        UPDATE Producto
+        SET nombre = p_nombre, descripcion = p_descripcion,
+            codigo_barras = p_codigo_barras, stock_minimo = p_stock_minimo
+        WHERE ID = p_ID;
+    END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -245,11 +270,26 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_AgregarProducto`(
     IN p_nombre VARCHAR(50),
-    IN p_descripcion VARCHAR(100)
+    IN p_descripcion VARCHAR(100),
+    IN p_codigo_barras VARCHAR(13),
+    IN p_stock_minimo INT
 )
 BEGIN
-    INSERT INTO Producto (nombre, descripcion)
-    VALUES (p_nombre, p_descripcion);
+    SET p_codigo_barras = NULLIF(TRIM(p_codigo_barras), '');
+
+    IF p_codigo_barras IS NOT NULL
+       AND EXISTS (SELECT 1 FROM Producto WHERE codigo_barras = p_codigo_barras) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Ya existe un producto con ese codigo de barras.';
+    END IF;
+
+    IF p_stock_minimo < 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'El stock minimo no puede ser negativo.';
+    END IF;
+
+    INSERT INTO Producto (nombre, descripcion, codigo_barras, stock_minimo)
+    VALUES (p_nombre, p_descripcion, p_codigo_barras, p_stock_minimo);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -484,15 +524,17 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ListaProductosAll`()
 BEGIN
-    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja FROM Producto;
+    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja,
+           codigo_barras, stock_minimo
+    FROM Producto;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -503,15 +545,16 @@ DELIMITER ;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ListaProductosID`(IN p_ID INT)
 BEGIN
-    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja
+    SELECT ID, nombre, descripcion, habilitado, motivo_baja, ID_usuario_baja, fecha_baja,
+           codigo_barras, stock_minimo
     FROM Producto WHERE ID = p_ID;
 END ;;
 DELIMITER ;
@@ -674,4 +717,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-28 20:28:58
+-- Dump completed on 2026-10-28 18:59:34

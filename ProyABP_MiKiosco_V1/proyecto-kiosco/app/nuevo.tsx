@@ -15,7 +15,7 @@ export default function Nuevo() {
   const queryClient = useQueryClient()
 
   async function guardar(nombre: string, descripcion: string) {
-    await agregarProducto(nombre, descripcion)
+    await agregarProducto(nombre, descripcion, '', null)
     // Marca el listado como viejo para que se vuelva a pedir
     queryClient.invalidateQueries({ queryKey: ['productos'] })
     router.back()

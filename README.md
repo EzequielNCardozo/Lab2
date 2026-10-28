@@ -22,11 +22,11 @@ App móvil para gestionar el catálogo y el stock de un kiosco
 ## Features pendientes
 
     11- Registrar un movimiento de stock escaneando el código de barras del producto
-        Base de datos
+        Base de datos                                                              - Completado
             - DB_migracion_v6.sql: columna codigo_barras (única, opcional) en Producto
             - SP de alta y modificación reciben el código y avisan si ya lo tiene otro producto
             - SP de listado devuelven el código
-        API
+        API                                                                        - Completado
             - POST y PUT de /api/productos reciben el código
         App
             - Instalar expo-camera
@@ -37,10 +37,10 @@ App móvil para gestionar el catálogo y el stock de un kiosco
         Datos
             - Cargar el código de los productos que ya existen
     12- Compartir por WhatsApp el pedido de reposición de los productos con poco stock
-        Base de datos
+        Base de datos                                                              - Completado
             - DB_migracion_v6.sql: columna stock_minimo (opcional) en Producto
             - SP de alta, modificación y listado manejan el stock mínimo
-        API
+        API                                                                        - Completado
             - POST y PUT de /api/productos reciben el stock mínimo
         App
             - Instalar expo-sharing y react-native-view-shot
@@ -82,9 +82,12 @@ App móvil para gestionar el catálogo y el stock de un kiosco
 ## Base de datos
     - DB_ParLab_completo.sql: crea la base desde cero, con los datos iniciales.
     - DB_ParLab_con_datos.sql: la base con los datos del proyecto (productos, stock, movimientos y usuarios).
+    - DB_migracion_v6.sql: agrega el código de barras y el stock mínimo a una base que ya exista.
     Están en ProyABP_MiKiosco_V1/api-y-base. Para importar la que tiene datos, parados en esa carpeta:
         mysql -u root -p < DB_ParLab_con_datos.sql
     Ojo: reemplaza la base DB_ParLab que ya tengan.
+    Si ya tienen la base y no quieren reemplazarla, alcanza con correr DB_migracion_v6.sql:
+        mysql -u root -p < DB_migracion_v6.sql
 
 ####
  Recordar: Cambiar contraseña en API.js y poner la IP de su PC en config.ts

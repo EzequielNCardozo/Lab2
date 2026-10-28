@@ -58,14 +58,40 @@ export async function obtenerProductoConStock(id: number): Promise<ProductoConSt
   }
 }
 
-/** Da de alta un producto. El ID lo genera la base. */
-export function agregarProducto(nombre: string, descripcion: string): Promise<void> {
-  return enviar('/productos', { nombre, descripcion }, 'agregar el producto')
+/**
+ * Busca un producto por su código de barras. Devuelve null si ninguno lo tiene.
+ *
+ * Filtra sobre el listado porque la API no tiene una búsqueda por código.
+ */
+export async function buscarPorCodigo(codigo: string): Promise<Producto | null> {
+  const productos = await obtenerProductos()
+  return productos.find((producto) => producto.codigo_barras === codigo) ?? null
 }
 
-/** Cambia el nombre y la descripción de un producto. */
-export function modificarProducto(id: number, nombre: string, descripcion: string): Promise<void> {
-  return enviar(`/productos/${id}`, { nombre, descripcion }, 'modificar el producto', 'PUT')
+/** Da de alta un producto. El ID lo genera la base; un código vacío se guarda como null. */
+export function agregarProducto(
+  nombre: string,
+  descripcion: string,
+  codigo_barras: string,
+  stock_minimo: number | null
+): Promise<void> {
+  return enviar('/productos', { nombre, descripcion, codigo_barras, stock_minimo }, 'agregar el producto')
+}
+
+/** Cambia los datos de un producto. Un código vacío o un mínimo null los borra. */
+export function modificarProducto(
+  id: number,
+  nombre: string,
+  descripcion: string,
+  codigo_barras: string,
+  stock_minimo: number | null
+): Promise<void> {
+  return enviar(
+    `/productos/${id}`,
+    { nombre, descripcion, codigo_barras, stock_minimo },
+    'modificar el producto',
+    'PUT'
+  )
 }
 
 /** Habilita o inhabilita un producto. Al inhabilitar, la base pide motivo y stock en 0. */

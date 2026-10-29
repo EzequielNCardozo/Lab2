@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Boton from './Boton'
 import CampoTexto from './CampoTexto'
+import CampoCodigoBarras from './CampoCodigoBarras'
 import { tema, type Colores } from '../styles/theme'
 import { useColores } from '../hooks/useColores'
 
@@ -9,15 +10,19 @@ type Props = {
   /** Valores con los que arranca: vacíos en el alta, los actuales al modificar. */
   nombreInicial?: string
   descripcionInicial?: string
+  codigoInicial?: string
+  stockMinimoInicial?: string
   textoBoton: string
   /** Guarda el producto; si falla, el mensaje del error se muestra en el formulario. */
-  onGuardar: (nombre: string, descripcion: string) => Promise<void>
+  onGuardar: (nombre: string, descripcion: string, codigo: string, stockMinimo: number | null) => Promise<void>
 }
 
-/** El formulario de nombre y descripción, compartido por el alta y la modificación. */
+/** El formulario del producto, compartido por el alta y la modificación. */
 export default function FormularioProducto({
   nombreInicial = '',
   descripcionInicial = '',
+  codigoInicial = '',
+  stockMinimoInicial = '',
   textoBoton,
   onGuardar,
 }: Props) {
@@ -26,6 +31,8 @@ export default function FormularioProducto({
 
   const [nombre, setNombre] = useState(nombreInicial)
   const [descripcion, setDescripcion] = useState(descripcionInicial)
+  const [codigo, setCodigo] = useState(codigoInicial)
+  const [stockMinimo, setStockMinimo] = useState(stockMinimoInicial)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,11 +45,24 @@ export default function FormularioProducto({
       return
     }
 
+    const codigoLimpio = codigo.trim()
+    if (!/^\d*$/.test(codigoLimpio)) {
+      setError('El código de barras solo lleva números.')
+      return
+    }
+
+    // Vacío quiere decir que el producto no entra en el pedido de reposición
+    const minimo = stockMinimo.trim() === '' ? null : Number(stockMinimo)
+    if (minimo !== null && (!Number.isInteger(minimo) || minimo < 0)) {
+      setError('El stock mínimo tiene que ser un número entero, cero o mayor.')
+      return
+    }
+
     setGuardando(true)
     setError(null)
 
     try {
-      await onGuardar(nombreLimpio, descripcion.trim())
+      await onGuardar(nombreLimpio, descripcion.trim(), codigoLimpio, minimo)
     } catch (problema) {
       setError(problema instanceof Error ? problema.message : String(problema))
       setGuardando(false)
@@ -67,6 +87,16 @@ export default function FormularioProducto({
         placeholder="Gaseosa cola"
         multilinea
         maximo={100}
+      />
+
+      <CampoCodigoBarras valor={codigo} onChangeText={setCodigo} />
+
+      <CampoTexto
+        etiqueta="Stock mínimo (opcional)"
+        valor={stockMinimo}
+        onChangeText={setStockMinimo}
+        placeholder="Con 5 o menos, entra en el pedido de reposición"
+        soloNumeros
       />
 
       {error ? <Text style={styles.error}>{error}</Text> : null}

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useQueryClient } from '@tanstack/react-query'
 import FormularioProducto from '../components/FormularioProducto'
 import { agregarProducto } from '../services/productos'
@@ -12,10 +12,12 @@ export default function Nuevo() {
   const styles = crearEstilos(colores)
 
   const router = useRouter()
+  // Llega desde el escaneo cuando el código no era de ningún producto
+  const { codigo } = useLocalSearchParams<{ codigo?: string }>()
   const queryClient = useQueryClient()
 
-  async function guardar(nombre: string, descripcion: string) {
-    await agregarProducto(nombre, descripcion, '', null)
+  async function guardar(nombre: string, descripcion: string, codigoBarras: string, stockMinimo: number | null) {
+    await agregarProducto(nombre, descripcion, codigoBarras, stockMinimo)
     // Marca el listado como viejo para que se vuelva a pedir
     queryClient.invalidateQueries({ queryKey: ['productos'] })
     router.back()
@@ -23,7 +25,7 @@ export default function Nuevo() {
 
   return (
     <ScrollView contentContainerStyle={styles.pantalla}>
-      <FormularioProducto textoBoton="Guardar producto" onGuardar={guardar} />
+      <FormularioProducto codigoInicial={codigo ?? ''} textoBoton="Guardar producto" onGuardar={guardar} />
 
       <View style={styles.nota}>
         <Text style={styles.textoNota}>

@@ -7,7 +7,7 @@ import { modificarProducto, obtenerProductoConStock } from '../../services/produ
 import { tema, type Colores } from '../../styles/theme'
 import { useColores } from '../../hooks/useColores'
 
-/** Pantalla para cambiar el nombre y la descripción de un producto. */
+/** Pantalla para cambiar los datos de un producto. */
 export default function EditarProducto() {
   const colores = useColores()
   const styles = crearEstilos(colores)
@@ -22,15 +22,8 @@ export default function EditarProducto() {
     queryFn: () => obtenerProductoConStock(idProducto),
   })
 
-  async function guardar(nombre: string, descripcion: string) {
-    // Hasta que el formulario tenga los campos, se mandan los que ya tiene
-    await modificarProducto(
-      idProducto,
-      nombre,
-      descripcion,
-      producto?.codigo_barras ?? '',
-      producto?.stock_minimo ?? null
-    )
+  async function guardar(nombre: string, descripcion: string, codigoBarras: string, stockMinimo: number | null) {
+    await modificarProducto(idProducto, nombre, descripcion, codigoBarras, stockMinimo)
     // El nombre se ve en el listado, el detalle y el historial
     queryClient.invalidateQueries()
     router.back()
@@ -58,6 +51,8 @@ export default function EditarProducto() {
       <FormularioProducto
         nombreInicial={producto.nombre}
         descripcionInicial={producto.descripcion ?? ''}
+        codigoInicial={producto.codigo_barras ?? ''}
+        stockMinimoInicial={producto.stock_minimo === null ? '' : String(producto.stock_minimo)}
         textoBoton="Guardar cambios"
         onGuardar={guardar}
       />

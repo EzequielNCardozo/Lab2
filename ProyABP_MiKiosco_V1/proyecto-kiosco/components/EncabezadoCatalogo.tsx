@@ -11,6 +11,7 @@ type Props = {
   busqueda: string
   onBuscar: (texto: string) => void
   onAgregar: () => void
+  onEscanear: () => void
   onHistorial: () => void
 }
 
@@ -21,6 +22,7 @@ export default function EncabezadoCatalogo({
   busqueda,
   onBuscar,
   onAgregar,
+  onEscanear,
   onHistorial,
 }: Props) {
   const colores = useColores()
@@ -47,8 +49,14 @@ export default function EncabezadoCatalogo({
 
       <View style={styles.acciones}>
         <View style={styles.accion}>
-          <Boton texto="Agregar producto" icono="add-circle-outline" onPress={onAgregar} />
+          <Boton texto="Agregar" icono="add-circle-outline" onPress={onAgregar} />
         </View>
+        <View style={styles.accion}>
+          <Boton texto="Escanear" icono="barcode-outline" onPress={onEscanear} />
+        </View>
+      </View>
+
+      <View style={styles.acciones}>
         <View style={styles.accion}>
           <Boton texto="Historial" icono="time-outline" variante="secundario" onPress={onHistorial} />
         </View>

@@ -28,7 +28,7 @@ App móvil para gestionar el catálogo y el stock de un kiosco
             - SP de listado devuelven el código
         API                                                                        - Completado
             - POST y PUT de /api/productos reciben el código
-        App
+        App                                                                        - Completado
             - Instalar expo-camera
             - Campo "Código de barras" con botón para escanear en el alta y la modificación
             - Pantalla app/escanear.tsx: lee el código con la cámara
@@ -76,7 +76,7 @@ App móvil para gestionar el catálogo y el stock de un kiosco
         - SafeAreaView para que la barra del celular no tape los botones                - Completado
         - Paginación del historial con useInfiniteQuery (de a 5 movimientos)            - Completado
     Clase 6
-        - expo-camera: escaneo del código de barras (feature 11)                         - Pendiente
+        - expo-camera: escaneo del código de barras (feature 11)                         - Completado
         - expo-sharing + react-native-view-shot: pedido de reposición (feature 12)       - Pendiente
 
 ## Base de datos

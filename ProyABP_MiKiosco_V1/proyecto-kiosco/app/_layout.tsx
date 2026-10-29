@@ -51,6 +51,7 @@ export default function Layout() {
             <Stack.Screen name="index" options={{ title: 'Productos y stock' }} />
             <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerBackVisible: false }} />
             <Stack.Screen name="nuevo" options={{ title: 'Agregar producto' }} />
+            <Stack.Screen name="escanear" options={{ title: 'Escanear código' }} />
             <Stack.Screen name="historial" options={{ title: 'Historial de movimientos' }} />
             <Stack.Screen name="producto/[id]" options={{ title: 'Detalle del producto' }} />
             <Stack.Screen name="movimiento/[id]" options={{ title: 'Registrar movimiento' }} />

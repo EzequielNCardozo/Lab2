@@ -93,6 +93,7 @@ export default function Inicio() {
         busqueda={busqueda}
         onBuscar={setBusqueda}
         onAgregar={() => router.push('/nuevo')}
+        onEscanear={() => router.push('/escanear')}
         onHistorial={() => router.push('/historial')}
       />
       <PestanasCatalogo elegida={pestana} onElegir={setPestana} />

@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 import { tema, type Colores } from '../styles/theme'
 import { useColores } from '../hooks/useColores'
+import { necesitaReposicion } from '../utils/reposicion'
 import type { ProductoConStock } from '../tipos/producto'
 
 type Props = {
@@ -23,7 +24,10 @@ export default function FilaProducto({ producto, onPress }: Props) {
           <Text style={styles.descripcion}>{producto.descripcion}</Text>
         ) : null}
         {producto.habilitado === 0 ? (
-          <Text style={styles.inhabilitado}>Inhabilitado</Text>
+          <Text style={styles.aviso}>Inhabilitado</Text>
+        ) : null}
+        {necesitaReposicion(producto) ? (
+          <Text style={styles.aviso}>Para reponer (mínimo {producto.stock_minimo})</Text>
         ) : null}
       </View>
 
@@ -64,7 +68,7 @@ function crearEstilos(colores: Colores) {
       color: colores.textoSuave,
       marginTop: 2,
     },
-    inhabilitado: {
+    aviso: {
       fontSize: tema.tipografia.chica,
       color: colores.error,
       marginTop: tema.espaciado.chico,

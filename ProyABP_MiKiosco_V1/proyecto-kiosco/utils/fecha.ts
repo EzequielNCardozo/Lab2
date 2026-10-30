@@ -11,3 +11,11 @@ export function formatearFecha(iso: string | null): string {
 
   return `${dia}/${mes}/${anio}`
 }
+
+/** La fecha de hoy en dd/mm/aaaa, según el reloj del celular. */
+export function fechaDeHoy(): string {
+  const hoy = new Date()
+  const dia = String(hoy.getDate()).padStart(2, '0')
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0')
+  return `${dia}/${mes}/${hoy.getFullYear()}`
+}

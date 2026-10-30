@@ -1,6 +1,7 @@
 import { traer, enviar } from './api'
 import type { Producto, ProductoConStock } from '../tipos/producto'
 import type { Stock } from '../tipos/stock'
+import { necesitaReposicion } from '../utils/reposicion'
 
 /** Todas las llamadas del catálogo. Las pantallas nunca usan fetch. */
 
@@ -38,6 +39,14 @@ export async function obtenerProductosConStock(): Promise<ProductoConStock[]> {
       cantidad: suStock ? suStock.cantidad : null,
     }
   })
+}
+
+/** Los productos que están en su stock mínimo o por debajo, ordenados por nombre. */
+export async function obtenerProductosAReponer(): Promise<ProductoConStock[]> {
+  const productos = await obtenerProductosConStock()
+  return productos
+    .filter(necesitaReposicion)
+    .sort((a, b) => a.nombre.localeCompare(b.nombre))
 }
 
 /**

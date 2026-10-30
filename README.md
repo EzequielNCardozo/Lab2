@@ -18,39 +18,14 @@ App móvil para gestionar el catálogo y el stock de un kiosco
     8- Modificar un producto                                 - Completado
     9- Habilitar o inhabilitar un producto                   - Completado
     10- Eliminar un producto                                 - Completado
+    11- Registrar un movimiento de stock escaneando el código de barras del producto  - Completado
+    12- Compartir por WhatsApp el pedido de reposición de los productos con poco stock - Completado
+
+    El código de barras y el stock mínimo de los productos los carga quien pruebe la app,
+    desde el alta o la modificación de cada producto.
 
 ## Features pendientes
 
-    11- Registrar un movimiento de stock escaneando el código de barras del producto
-        Base de datos                                                              - Completado
-            - DB_migracion_v6.sql: columna codigo_barras (única, opcional) en Producto
-            - SP de alta y modificación reciben el código y avisan si ya lo tiene otro producto
-            - SP de listado devuelven el código
-        API                                                                        - Completado
-            - POST y PUT de /api/productos reciben el código
-        App                                                                        - Completado
-            - Instalar expo-camera
-            - Campo "Código de barras" con botón para escanear en el alta y la modificación
-            - Pantalla app/escanear.tsx: lee el código con la cámara
-            - Botón "Escanear" en el catálogo: si el producto existe abre el registro de
-              movimiento; si no existe, ofrece darlo de alta con ese código
-        Datos
-            - Cargar el código de los productos que ya existen
-    12- Compartir por WhatsApp el pedido de reposición de los productos con poco stock
-        Base de datos                                                              - Completado
-            - DB_migracion_v6.sql: columna stock_minimo (opcional) en Producto
-            - SP de alta, modificación y listado manejan el stock mínimo
-        API                                                                        - Completado
-            - POST y PUT de /api/productos reciben el stock mínimo
-        App
-            - Instalar expo-sharing y react-native-view-shot
-            - Campo "Stock mínimo" en el alta y la modificación
-            - Pantalla app/reposicion.tsx: productos con stock igual o menor al mínimo
-            - Botón "Compartir": arma una imagen del pedido y abre el menú de compartir
-              del celular para mandarlo por WhatsApp
-            - Botón "Reponer" en el catálogo
-        Datos
-            - Cargar el stock mínimo de los productos que ya existen
     13- Filtrar el historial por fecha y por usuario
     14- Alta, baja y modificación de clientes
     15- Alta, baja y modificación de proveedores
@@ -77,7 +52,7 @@ App móvil para gestionar el catálogo y el stock de un kiosco
         - Paginación del historial con useInfiniteQuery (de a 5 movimientos)            - Completado
     Clase 6
         - expo-camera: escaneo del código de barras (feature 11)                         - Completado
-        - expo-sharing + react-native-view-shot: pedido de reposición (feature 12)       - Pendiente
+        - expo-sharing + react-native-view-shot: pedido de reposición (feature 12)       - Completado
 
 ## Base de datos
     - DB_ParLab_completo.sql: crea la base desde cero, con los datos iniciales.

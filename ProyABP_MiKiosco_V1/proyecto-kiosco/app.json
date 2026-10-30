@@ -19,7 +19,13 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-camera", { "cameraPermission": "La cámara se usa para leer el código de barras de los productos." }]
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "La cámara se usa para leer el código de barras de los productos."
+        }
+      ],
+      "expo-sharing"
     ]
   }
 }

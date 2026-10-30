@@ -95,6 +95,7 @@ export default function Inicio() {
         onAgregar={() => router.push('/nuevo')}
         onEscanear={() => router.push('/escanear')}
         onHistorial={() => router.push('/historial')}
+        onReponer={() => router.push('/reposicion')}
       />
       <PestanasCatalogo elegida={pestana} onElegir={setPestana} />
       {contenido()}

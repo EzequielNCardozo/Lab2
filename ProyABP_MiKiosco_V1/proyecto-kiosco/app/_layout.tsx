@@ -53,6 +53,7 @@ export default function Layout() {
             <Stack.Screen name="nuevo" options={{ title: 'Agregar producto' }} />
             <Stack.Screen name="escanear" options={{ title: 'Escanear código' }} />
             <Stack.Screen name="historial" options={{ title: 'Historial de movimientos' }} />
+            <Stack.Screen name="reposicion" options={{ title: 'Pedido de reposición' }} />
             <Stack.Screen name="producto/[id]" options={{ title: 'Detalle del producto' }} />
             <Stack.Screen name="movimiento/[id]" options={{ title: 'Registrar movimiento' }} />
             <Stack.Screen name="editar/[id]" options={{ title: 'Modificar producto' }} />

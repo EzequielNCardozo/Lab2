@@ -13,6 +13,7 @@ type Props = {
   onAgregar: () => void
   onEscanear: () => void
   onHistorial: () => void
+  onReponer: () => void
 }
 
 /** La parte fija de arriba del catálogo: la sesión, el buscador y las acciones. */
@@ -24,6 +25,7 @@ export default function EncabezadoCatalogo({
   onAgregar,
   onEscanear,
   onHistorial,
+  onReponer,
 }: Props) {
   const colores = useColores()
   const styles = crearEstilos(colores)
@@ -59,6 +61,9 @@ export default function EncabezadoCatalogo({
       <View style={styles.acciones}>
         <View style={styles.accion}>
           <Boton texto="Historial" icono="time-outline" variante="secundario" onPress={onHistorial} />
+        </View>
+        <View style={styles.accion}>
+          <Boton texto="Reponer" icono="cart-outline" variante="secundario" onPress={onReponer} />
         </View>
       </View>
     </View>
